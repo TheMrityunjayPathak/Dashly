@@ -44,3 +44,8 @@ if set(["customers", "products", "orders"]).issubset(existing_tables):
     logging.info("Tables already exist. Skipping ETL setup.")
 else:
     logging.info("Tables do not exist. Running ETL setup...")
+
+    # Reading CSV File
+    from utils.read_data import load_csv
+    df = load_csv("data", "sales_data.csv")
+    logging.info("CSV file loaded successfully")
