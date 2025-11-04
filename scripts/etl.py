@@ -115,3 +115,15 @@ else:
             conn.execute(text(stm))
         conn.commit()
     logging.info("Database schema created successfully")
+
+    # Customers Table
+    customers_cols = ["customer_id", "customer_name", "segment", "city", "state", "country", "postal_code", "region"]
+    customers = df[customers_cols].drop_duplicates(subset="customer_id")
+
+    # Products Table
+    products_cols = ["product_id", "product_name", "category", "sub_category"]
+    products = df[products_cols].drop_duplicates(subset="product_id")
+
+    # Orders Table
+    orders_cols = ["order_id", "order_date", "customer_id", "product_id", "ship_mode", "ship_date", "sales", "quantity", "discount", "profit"]
+    orders = df[orders_cols].drop_duplicates(subset="order_id")
