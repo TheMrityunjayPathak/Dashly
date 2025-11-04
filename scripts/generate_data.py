@@ -18,3 +18,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
                         logging.FileHandler(log_file, mode="a"),
                         logging.StreamHandler()
                     ])
+
+# Adding utils to PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
