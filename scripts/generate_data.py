@@ -67,3 +67,11 @@ customers = optimize_customers(customers)
 orders = optimize_orders(orders)
 
 logging.info("Data cleaned and optimized successfully")
+
+# ---------------- Appending New Data to Neon PostgreSQL Database ---------------- 
+
+# Appending new and unique data to Neon PostgreSQL Database
+from utils.append_data import append_unique_data_to_db
+append_unique_data_to_db("customers", customers, "customer_id", engine)
+append_unique_data_to_db("orders", orders, "order_id", engine)
+logging.info("New data uploaded to database successfully")
