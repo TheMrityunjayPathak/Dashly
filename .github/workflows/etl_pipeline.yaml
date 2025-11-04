@@ -66,3 +66,11 @@ jobs:
       - name: Run Export Views Script
         run: |
           python scripts/export_views.py
+
+      # ---------------- Step 8 : Save CSVs as Artifacts ----------------
+      # Stores CSVs in the workflow run, downloadable from GitHub
+      - name: Upload Exported CSV as Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: exported-views
+          path: views/*.csv
