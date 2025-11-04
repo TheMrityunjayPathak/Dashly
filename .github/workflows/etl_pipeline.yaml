@@ -48,3 +48,9 @@ jobs:
       - name: Run ETL Script
         run: |
           python scripts/etl.py
+
+      # ---------------- Step 5 : Generate New Data and Append ----------------
+      # Creates new data of customers and orders to ingest in the Neon Database
+      - name: Run Generate Data Script
+        run: |
+          python scripts/generate_data.py
