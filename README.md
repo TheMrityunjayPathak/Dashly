@@ -1085,7 +1085,7 @@ It includes pipeline performance metrics like runtime, automation frequency and 
 | ----------------------- | :-------------------------------------------------- |
 | **Automation Tool**     | GitHub Actions                                      |
 | **Execution Frequency** | Daily                                               |
-| **Scheduled Time**      | 10:00 AM UTC                                        |
+| **Scheduled Time**      | 10:00 AM                                            |
 | **Trigger Type**        | `cron` (automated) and `workflow_dispatch` (manual) |
 | **Runner Environment**  | `ubuntu-latest` (Linux VM)                          |
 
@@ -1113,7 +1113,7 @@ It includes pipeline performance metrics like runtime, automation frequency and 
 > [!NOTE]
 > Total Runtime : ~45 to ~50 seconds per pipeline run
 > 
-> Scheduling : The workflow is scheduled via cron (30 4 * * *), meaning it runs daily at 10:00 AM UTC.
+> Scheduling : The workflow is scheduled via cron (30 4 * * *), meaning it runs daily at 10:00 AM.
 > 
 > The ETL pipeline runs within a minute, automatically refreshing the dashboard data daily without manual effort.
 
@@ -1443,7 +1443,7 @@ DB_PASS: ${{ secrets.DB_PASS }}
 
 ## GitHub Actions
 - The GitHub Actions workflow automates the entire ETL pipeline, without any manual effort.
-- It runs every day at 12:00 AM UTC and ensures that the latest data are always updated.
+- It runs every day at 10:00 AM and ensures that the latest data are always updated.
 
 <details>
   <summary>Click Here to view the entire Script</summary>
@@ -1456,7 +1456,7 @@ name: ETL Pipeline Automation
 # ---------------- When should it run? ----------------
 on:
   schedule:
-    - cron: "0 0 * * *"    # Run the workflow daily at 12:00 AM UTC
+    - cron: "30 4 * * *"   # Run the workflow daily at 10:00 AM
   workflow_dispatch:       # Allow manual run from GitHub UI
 
 # ---------------- Authority to update Repository ----------------
@@ -1562,10 +1562,10 @@ name: ETL Pipeline Automation
 ```yaml
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "30 4 * * *"
   workflow_dispatch:
 ```
-- **schedule :** Runs every day at 12:00 AM UTC automatically (based on the cron expression).
+- **schedule :** Runs every day at 10:00 AM automatically (based on the cron expression).
 - **workflow_dispatch :** Allows you to manually trigger the workflow from the GitHub Actions tab.
 
 <hr>
