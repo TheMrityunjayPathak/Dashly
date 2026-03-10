@@ -12,7 +12,7 @@
 </div>
 
 <a href="https://app.powerbi.com/view?r=eyJrIjoiZTgxODBhYmMtYjc1Zi00YjVkLWIyZDItZDYxY2RjZmIwNGY5IiwidCI6ImZhYjAyYzVkLTYxYjYtNGIxMi05ZTY2LTdhMDhkOWY0ZmNjMSJ9&pageName=5b9aaf645951a59cacdc">
-  <img title="Dashly" src="https://github.com/user-attachments/assets/be84d954-9d52-4692-8a77-d40853a91d61">
+  <img title="Dashly" src="https://github.com/user-attachments/assets/bb5eaa04-6e1f-4e57-b038-160018dd896e">
 </a>
 
 ## Table of Contents
