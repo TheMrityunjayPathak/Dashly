@@ -1181,7 +1181,7 @@ This section highlights key business insights and trends derived from the Power 
 - Second Class contributes ~19% of sales (~₹1.65M) and profit (~₹293K), showing steady usage.
 - First Class accounts for ~16% of sales (~₹1.34M) and ~15% of profit (~₹231K), preferred for faster delivery.
 - Same Day contributes ~5% of sales (~₹0.44M) and profit (~₹79K), lowest usage but fastest option.
-- Profit margins remain consistent across modes (~17–18%), indicating stable logistics and pricing control.
+- Profit margins remain consistent across modes (~17-18%), indicating stable logistics and pricing control.
 
 </details>
 
@@ -1227,8 +1227,8 @@ This section highlights key business insights and trends derived from the Power 
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- Q4 (Oct–Dec) drives ~27% of annual sales and profit, making it the strongest quarter for promotions.
-- Profit margins stay steady at ~17–18% throughout the year, indicating consistent pricing and cost control.
+- Q4 (Oct-Dec) drives ~27% of annual sales and profit, making it the strongest quarter for promotions.
+- Profit margins stay steady at ~17-18% throughout the year, indicating consistent pricing and cost control.
 - December and March are peak months by sales contribution, ideal for marketing campaigns and seasonal offers.
 - Sales and profit are evenly distributed across months, reflecting stable and predictable performance.
 
@@ -1317,7 +1317,7 @@ This section highlights key business insights and trends derived from the Power 
 
 - Standard Class drives ~60% of sales (₹5.1M) and profit (₹897K), making it the most profitable shipping mode.
 - Consumer Segment generates ~50% of revenue (~₹4.26M) and profit (~₹757K), our primary customer base.
-- Q4 (Oct–Dec) contributes ~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
+- Q4 (Oct-Dec) contributes ~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
 - Paper, Binders, and Phones are the top-performing sub-categories, together making up ~45% of total revenue.
 - West and East regions lead with ~58% of total sales, while the South with ~19% shows strong growth potential.
 - Top 5 States (CA, NY, TX, PA, OH) generates ~54% of total sales, with CA alone contributing ~21% of sales.
