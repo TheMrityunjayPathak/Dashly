@@ -56,8 +56,8 @@ Currently, the store relies heavily on multiple spreadsheets and manual SQL quer
 <hr>
 
 ## Overview
-- Designed a fully automated ETL pipeline using Python, SQLAlchemy and GitHub Actions for daily data updates.
-- Built Python ETL scripts to extract, transform and load 50,000+ sales records into a Neon PostgreSQL database.
+- Designed a fully automated ETL pipeline using Python, SQLAlchemy, and GitHub Actions for daily data updates.
+- Built Python ETL scripts to extract, transform, and load 50,000+ sales records into a Neon PostgreSQL database.
 - Simulated ~100 new transactions daily to replicate ongoing business activity and test pipeline reliability.
 - Integrated Power BI with the database, enabling a real-time, auto-refreshing dashboard without manual updates.
 
@@ -1320,7 +1320,7 @@ This section highlights key business insights and trends derived from the Power 
 - Q4 (Oct-Dec) contributes ~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
 - Paper, Binders, and Phones are the top-performing sub-categories, together making up ~45% of total revenue.
 - West and East regions lead with ~58% of total sales, while the South with ~19% shows strong growth potential.
-- Top 5 States (CA, NY, TX, PA, OH) generates ~54% of total sales, with CA alone contributing ~21% of sales.
+- Top 5 States (CA, NY, TX, PA, OH) generate ~54% of total sales, with CA alone contributing ~21% of sales.
 
 <hr>
 
