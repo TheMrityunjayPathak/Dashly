@@ -1064,7 +1064,7 @@ Once this cycle is complete, the process repeats automatically :
 generate_data.py ➜ create_views.py ➜ Power BI Refresh ➜ New Insights
 ```
 
-This ensures that the Power BI Dashboard always display the latest insights automatically.
+This ensures that the Power BI Dashboard always displays the latest insights automatically.
 
 <img title="ETL Pipeline" src="https://github.com/user-attachments/assets/a4a54ad4-eace-4f3c-b90d-53bb0983de00">
 
@@ -1499,7 +1499,7 @@ DB_PASS: ${{ secrets.DB_PASS }}
 
 ## GitHub Actions
 - The GitHub Actions workflow automates the entire ETL pipeline, without any manual effort.
-- It runs every day at 10:00 AM and ensures that the latest data are always updated.
+- It runs every day at 10:00 AM and ensures that the latest data is always updated.
 
 <details>
 <summary>Click Here to view GitHub Actions YAML File</summary>
@@ -1673,7 +1673,7 @@ jobs:
   with:
     python-version: "3.13.0"
 ```
-- Installs Python 3.13.0 on the VM, the version your ETL scripts uses.
+- Installs Python 3.13.0 on the VM, version used by the ETL scripts.
 
 #### Step 3 : Install Dependencies
 ```yaml
@@ -1692,7 +1692,7 @@ jobs:
 - Runs your `etl.py` script which :
   - Cleans and transforms raw data.
   - Loads it into the Neon PostgreSQL Database.
-  - Uses GitHub Secrets to securely access database credentials (so they're never expose in code).
+  - Uses GitHub Secrets to securely access database credentials (so they're never exposed in code).
 
 #### Step 5 : Generate New Data
 ```yaml
