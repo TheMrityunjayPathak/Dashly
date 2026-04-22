@@ -59,7 +59,7 @@ Currently, the store relies heavily on multiple spreadsheets and manual SQL quer
 - Designed a fully automated ETL pipeline using Python, SQLAlchemy, and GitHub Actions for daily data updates.
 - Built Python ETL scripts to extract, transform, and load 50,000+ sales records into a Neon PostgreSQL database.
 - Simulated ~100 new transactions daily to replicate ongoing business activity and test pipeline reliability.
-- Integrated Power BI with the database, enabling a real-time, auto-refreshing dashboard without manual updates.
+- Integrated Power BI with PostgreSQL, enabling a real-time auto-refreshing dashboard without manual updates.
 
 <hr>
 
@@ -1308,7 +1308,7 @@ This section highlights key business insights and trends derived from the Power 
 ## Impact
 
 - Improved daily data update time from hours to under a minute (average ~45 seconds) using GitHub Actions.
-- Reduced reporting time by 80% through automation, enabling faster tracking of revenue and profit performance.
+- Reduced reporting time by 80% through automation, enabling faster tracking of revenue and profit.
 - Achieved 100% workflow reliability with zero pipeline failures since deployment (as recorded in GitHub Actions).
 
 <hr>
