@@ -421,6 +421,8 @@ DB_HOST=host_name
 DB_NAME=database_name
 DB_USER=user_name
 DB_PASS=password
+KAGGLE_USERNAME=kaggle_username
+KAGGLE_KEY=kaggle_api_key
 ```
 
 > [!IMPORTANT]
@@ -1110,7 +1112,7 @@ This section summarizes pipeline performance metrics such as runtime, automation
 | :----------------------------------- | :--------------------------------------------------- | :---------------: |
 | **Set up job**                       | Initializes GitHub Actions environment               |        1s         |
 | **Checkout repository**              | Pulls repository code into the runner                |        1s         |
-| **Set up Python**                    | Installs Python environment (v3.13.0)                |        0s         |
+| **Set up Python**                    | Installs Python environment (v3.12)                  |        0s         |
 | **Install dependencies**             | Installs libraries from `requirements.txt`           |        22s        |
 | **Run ETL Script**                   | Extracts, transforms, and loads data into PostgreSQL |        3s         |
 | **Run Generate Data Script**         | Generates new synthetic customer and order data      |        4s         |
@@ -1523,32 +1525,36 @@ permissions:
 jobs:
   data-pipeline:
     runs-on: ubuntu-latest   # Use a Linux VM for the Job
+    timeout-minutes: 30      # Prevents stuck workflows from running forever
 
     env: # Shared env variables available to all scripts
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASS: ${{ secrets.DB_PASS }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_NAME: ${{ secrets.DB_NAME }}
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
 
     steps:
       # ---------------- Step 1 : Checkout Code ----------------
       # This pulls your repository into the GitHub Runner VM
       - name: Checkout repository
-        uses: actions/checkout@v3   
+        uses: actions/checkout@v4   
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # ---------------- Step 2 : Set up Python ----------------
-      # Installs Python 3.13.0 so GitHub can run your Scripts
+      # Installs Python 3.12 so GitHub can run your Scripts
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.13.0"
+          python-version: "3.12"
 
       # ---------------- Step 3 : Install Dependencies ----------------
       # Installs all Python libraries listed in requirements.txt
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       # ---------------- Step 4 : Run ETL Script ----------------
@@ -1643,12 +1649,15 @@ permissions:
 jobs:
   data-pipeline:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     env: # Shared env variables available to all scripts
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASS: ${{ secrets.DB_PASS }}
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_NAME: ${{ secrets.DB_NAME }}
+        KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+        KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
 ```
 - **jobs :** Defines what tasks (jobs) the workflow will perform.
 - **data-pipeline :** The name of your main job.
@@ -1662,23 +1671,24 @@ jobs:
 #### Step 1 : Checkout Repository
 ```yaml
 - name: Checkout repository
-  uses: actions/checkout@v3
+  uses: actions/checkout@v4
 ```
 - This pulls your GitHub Repository files into the VM so the workflow can access your scripts, data and folders.
 
 #### Step 2 : Set Up Python
 ```yaml
 - name: Set up Python
-  uses: actions/setup-python@v4
+  uses: actions/setup-python@v5
   with:
-    python-version: "3.13.0"
+    python-version: "3.12"
 ```
-- Installs Python 3.13.0 on the VM, version used by the ETL scripts.
+- Installs Python 3.12 on the VM, version used by the ETL scripts.
 
 #### Step 3 : Install Dependencies
 ```yaml
 - name: Install dependencies
   run: |
+    python -m pip install --upgrade pip
     pip install -r requirements.txt
 ```
 - Installs all the Python libraries listed in `requirements.txt` file.
