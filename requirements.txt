@@ -1,7 +1,7 @@
-kagglehub
-numpy
-pandas
-sqlalchemy
-psycopg2
-python-dotenv
-faker
+kaggle==1.6.17
+numpy==2.2.6
+pandas==2.3.0
+sqlalchemy==2.0.41
+psycopg2-binary==2.9.10
+python-dotenv==1.1.0
+faker==37.4.0
