@@ -1,23 +1,32 @@
 # Importing Libraries
 import os
 import random
-import kagglehub
 import numpy as np
 import pandas as pd
 from faker import Faker
 from functools import reduce
 from datetime import timedelta
+from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Setting up Faker to generate Fake Data
 faker = Faker("en_US")
 
 # Downloading the latest version of the Dataset from Kaggle
-path = kagglehub.dataset_download("vivek468/superstore-dataset-final")
+api = KaggleApi()
+api.authenticate()
 
-# Creating CSV File Path
-for file in os.listdir(path):
+dataset_path = "data"
+
+os.makedirs(dataset_path, exist_ok=True)
+
+api.dataset_download_files(
+    "vivek468/superstore-dataset-final", path=dataset_path, unzip=True
+)
+
+# Finding CSV File
+for file in os.listdir(dataset_path):
     if file.endswith(".csv"):
-        csv_file_path = os.path.join(path, file)
+        csv_file_path = os.path.join(dataset_path, file)
 
 # Reading the CSV File
 df = pd.read_csv(csv_file_path, encoding_errors="ignore")
@@ -26,17 +35,38 @@ df = pd.read_csv(csv_file_path, encoding_errors="ignore")
 df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
 
 # Customers DataFrame
-customers_cols = ["customer_id", "customer_name", "segment", "city", "state", "country", "postal_code", "region"]
+customers_cols = [
+    "customer_id",
+    "customer_name",
+    "segment",
+    "city",
+    "state",
+    "country",
+    "postal_code",
+    "region",
+]
 customers = df[customers_cols].drop_duplicates(subset="customer_id")
 
 # Products DataFrame
 products_cols = ["product_id", "product_name", "category", "sub_category"]
 products = df[products_cols].drop_duplicates(subset="product_id")
-products.columns = products.columns.str.title().str.replace("_"," ")
+products.columns = products.columns.str.title().str.replace("_", " ")
 
 # Orders DataFrame
-orders_cols = ["order_id", "order_date", "customer_id", "product_id", "ship_mode", "ship_date", "sales", "quantity", "discount", "profit"]
+orders_cols = [
+    "order_id",
+    "order_date",
+    "customer_id",
+    "product_id",
+    "ship_mode",
+    "ship_date",
+    "sales",
+    "quantity",
+    "discount",
+    "profit",
+]
 orders = df[orders_cols].drop_duplicates(subset="order_id")
+
 
 def random_customers_data(lower_limit, upper_limit):
     """
@@ -69,7 +99,9 @@ def random_customers_data(lower_limit, upper_limit):
     """
     # Data and Weights to generate Random Values
     segment_data = np.sort(customers["segment"].unique())
-    segment_weight = customers["segment"].value_counts(normalize=True).sort_index().values
+    segment_weight = (
+        customers["segment"].value_counts(normalize=True).sort_index().values
+    )
 
     city_data = np.sort(customers["city"].unique())
     city_weight = customers["city"].value_counts(normalize=True).sort_index().values
@@ -89,7 +121,7 @@ def random_customers_data(lower_limit, upper_limit):
             customer_name = faker.name()
             postal_code = faker.numerify("%####")
             customer_id = f"{reduce(lambda x, y: x[0] + y[0], customer_name.split())}-{faker.numerify('%####')}-{postal_code}"
-            
+
             if customer_id not in used_ids:
                 used_ids.add(customer_id)
                 break
@@ -101,20 +133,23 @@ def random_customers_data(lower_limit, upper_limit):
         postal_code = postal_code
         region = random.choices(region_data, weights=region_weight, k=1)[0]
 
-        customers_data.append({
-            "Customer Id": customer_id,
-            "Customer Name": customer_name,
-            "Segment": segment,
-            "City": city,
-            "State": state,
-            "Country": country,
-            "Postal Code": int(postal_code),
-            "Region": region
-        })
+        customers_data.append(
+            {
+                "Customer Id": customer_id,
+                "Customer Name": customer_name,
+                "Segment": segment,
+                "City": city,
+                "State": state,
+                "Country": country,
+                "Postal Code": int(postal_code),
+                "Region": region,
+            }
+        )
 
     global customers_df
     customers_df = pd.DataFrame(customers_data)
     return customers_df
+
 
 def random_orders_data(lower_limit, upper_limit):
     """
@@ -155,23 +190,44 @@ def random_orders_data(lower_limit, upper_limit):
     """
     # Data and Weights to generate Random Values
     order_id_data = orders["order_id"].str.split("-").str.get(0).unique()
-    order_id_weight = orders["order_id"].str.split("-").str.get(0).value_counts(normalize=True).values
+    order_id_weight = (
+        orders["order_id"].str.split("-").str.get(0).value_counts(normalize=True).values
+    )
 
     ship_mode_data = np.sort(orders["ship_mode"].unique())
-    ship_mode_weight = orders["ship_mode"].value_counts(normalize=True).sort_index().values
+    ship_mode_weight = (
+        orders["ship_mode"].value_counts(normalize=True).sort_index().values
+    )
 
-    sales_data = [range(50, 500), range(500, 1000), range(1000, 2000), range(2000, int(orders["sales"].max()))]
-    sales_weight = pd.cut(orders["sales"], bins=[0, 500, 1000, 2000, int(orders["sales"].max())]).value_counts(normalize=True).values
+    sales_data = [
+        range(50, 500),
+        range(500, 1000),
+        range(1000, 2000),
+        range(2000, int(orders["sales"].max())),
+    ]
+    sales_weight = (
+        pd.cut(orders["sales"], bins=[0, 500, 1000, 2000, int(orders["sales"].max())])
+        .value_counts(normalize=True)
+        .values
+    )
 
     quantity_data = np.sort(orders["quantity"].unique())
-    quantity_weight = orders["quantity"].value_counts(normalize=True).sort_index().values
+    quantity_weight = (
+        orders["quantity"].value_counts(normalize=True).sort_index().values
+    )
 
     discount_data = np.sort(orders["discount"].unique())
-    discount_weight = orders["discount"].value_counts(normalize=True).sort_index().values
+    discount_weight = (
+        orders["discount"].value_counts(normalize=True).sort_index().values
+    )
 
     # Shipping Duration Dictionary
-    orders["shipping_duration"] = (pd.to_datetime(orders["ship_date"]) - pd.to_datetime(orders["order_date"])).dt.days
-    shipping_duration_map = np.round(orders.groupby("ship_mode")["shipping_duration"].mean()).to_dict()
+    orders["shipping_duration"] = (
+        pd.to_datetime(orders["ship_date"]) - pd.to_datetime(orders["order_date"])
+    ).dt.days
+    shipping_duration_map = np.round(
+        orders.groupby("ship_mode")["shipping_duration"].mean()
+    ).to_dict()
 
     # Generating Orders Data
     orders_data = []
@@ -194,19 +250,21 @@ def random_orders_data(lower_limit, upper_limit):
         quantity = random.choices(quantity_data, weights=quantity_weight, k=1)[0]
         discount = random.choices(discount_data, weights=discount_weight, k=1)[0]
         profit_margin = random.uniform(0.05, 0.30)
-        profit = round(sales*profit_margin)
+        profit = round(sales * profit_margin)
 
-        orders_data.append({
-            "Order Id": order_id,
-            "Order Date": order_date,
-            "Customer Id": customer_id,
-            "Product Id": product_id,
-            "Ship Mode": ship_mode,
-            "Ship Date": ship_date,
-            "Sales": sales,
-            "Quantity": quantity,
-            "Discount": discount,
-            "Profit": profit
-        })
+        orders_data.append(
+            {
+                "Order Id": order_id,
+                "Order Date": order_date,
+                "Customer Id": customer_id,
+                "Product Id": product_id,
+                "Ship Mode": ship_mode,
+                "Ship Date": ship_date,
+                "Sales": sales,
+                "Quantity": quantity,
+                "Discount": discount,
+                "Profit": profit,
+            }
+        )
 
-    return pd.DataFrame(orders_data)    
+    return pd.DataFrame(orders_data)
