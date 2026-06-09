@@ -1,0 +1,37 @@
+segment,month_name,total_sales,total_profit
+Corporate,Oct,392775.0,68730.0
+Home Office,Jul,254166.0,44694.0
+Consumer,Jul,590533.0,104606.0
+Corporate,Mar,365541.0,62299.0
+Consumer,Nov,571931.0,98998.0
+Home Office,Aug,205828.0,34671.0
+Consumer,Aug,647761.0,118169.0
+Corporate,Aug,342799.0,60684.0
+Home Office,Apr,210776.0,37599.0
+Consumer,Jun,625420.0,110849.0
+Consumer,May,607758.0,107759.0
+Home Office,Sep,188320.0,31450.0
+Corporate,Jul,326321.0,59680.0
+Corporate,Dec,461684.0,84074.0
+Corporate,May,401033.0,70530.0
+Corporate,Apr,381011.0,66436.0
+Home Office,May,228493.0,42628.0
+Home Office,Jan,253469.0,46142.0
+Home Office,Jun,208579.0,37879.0
+Consumer,Sep,631610.0,109819.0
+Home Office,Mar,255935.0,41829.0
+Consumer,Apr,639078.0,114085.0
+Home Office,Nov,230220.0,40301.0
+Home Office,Oct,258535.0,45011.0
+Consumer,Dec,697829.0,125312.0
+Corporate,Nov,422281.0,73324.0
+Corporate,Sep,338241.0,59248.0
+Corporate,Feb,358642.0,61285.0
+Home Office,Feb,209603.0,37350.0
+Consumer,Mar,652437.0,115137.0
+Consumer,Oct,650899.0,112398.0
+Corporate,Jan,421077.0,73755.0
+Consumer,Jan,636894.0,117592.0
+Corporate,Jun,353854.0,63021.0
+Home Office,Dec,239395.0,40632.0
+Consumer,Feb,578431.0,102450.0
