@@ -1,9 +1,9 @@
-<h3 align="center">Dashly : Live Sales Dashboard</h3>
+<h3 align="center" id="top">Dashly : Live Sales Dashboard</h3>
 
 <div align="center">
 
 [![Power BI](https://img.shields.io/badge/Live-Dashboard-F2C811?style=flat&logo=codeforces&logoColor=white)](https://app.powerbi.com/view?r=eyJrIjoiZTgxODBhYmMtYjc1Zi00YjVkLWIyZDItZDYxY2RjZmIwNGY5IiwidCI6ImZhYjAyYzVkLTYxYjYtNGIxMi05ZTY2LTdhMDhkOWY0ZmNjMSJ9&pageName=5b9aaf645951a59cacdc)
-[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat&logo=githubactions&logoColor=white)](https://github.com/themrityunjaypathak/Dashly/actions/workflows/etl_pipeline.yaml)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-08872B?style=flat&logo=githubactions&logoColor=white)](https://github.com/themrityunjaypathak/Dashly/actions/workflows/etl_pipeline.yaml)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Pandas](https://img.shields.io/badge/Pandas-4420C7?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
@@ -37,14 +37,14 @@
 <hr>
 
 ## Problem Statement
-Quick Buy is a leading superstore operating across the United States, selling thousands of products across regions.
+Quick Buy is a superstore operating across the United States.
 
-Currently, the store relies heavily on multiple spreadsheets and manual SQL queries to track business performance.
+Currently, the store relies heavily on multiple spreadsheets and ad-hoc SQL queries to track business performance.
 - This manual process makes it :
   - Hard to keep data structured and consistent.
   - Time-consuming to prepare reports.
   - Difficult to manually update daily transaction data.
-  - Challenging for non-technical users to extract and understand key business insights.
+  - Challenging for non-technical users to understand key business insights.
     
 - To solve these challenges, Quick Buy aims to build an automated system that :
   - Collects and stores all data in a structured database.
@@ -58,8 +58,8 @@ Currently, the store relies heavily on multiple spreadsheets and manual SQL quer
 ## Overview
 - Designed a fully automated ETL pipeline using Python, SQLAlchemy, and GitHub Actions for daily data updates.
 - Built Python ETL scripts to extract, transform, and load 50,000+ sales records into a Neon PostgreSQL database.
-- Simulated ~100 new transactions daily to replicate ongoing business activity and test pipeline reliability.
-- Integrated Power BI with PostgreSQL, enabling a real-time auto-refreshing dashboard without manual updates.
+- Simulated \~100 new transactions daily to replicate ongoing business activity and test pipeline reliability.
+- Integrated Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
 
 <hr>
 
@@ -242,7 +242,7 @@ FROM orders AS o
 JOIN customers AS c
 ON o.customer_id = c.customer_id
 GROUP BY c.state;
-````
+```
 
 ```sql
 /* segment_wise_monthly_sales_and_profit */
@@ -368,7 +368,7 @@ GROUP BY c.state, p.sub_category;
 First, clone the project from GitHub to your local system.
 ```bash
 git clone https://github.com/themrityunjaypathak/Dashly.git
-````
+```
 
 ### 2. Set Up a Virtual Environment
 To avoid version conflicts and keep your project isolated, create a virtual environment.
@@ -482,7 +482,7 @@ It simplifies queries, ensures consistent logic, and improves performance.
 python scripts/create_views.py
 ```
 
-### 9. Generate New Data (Optional)
+### 9. Generate New Data
 Simulates daily transactions by generating new random data for testing pipeline automation.
 
 Helps verify how dashboards respond to new data over time.
@@ -490,7 +490,7 @@ Helps verify how dashboards respond to new data over time.
 python scripts/generate_data.py
 ```
 
-### 10. Export Views as CSVs (Optional)
+### 10. Export Views as CSVs
 Exports SQL view results to CSV files inside the `views/` folder.
 
 This is useful for sharing datasets or validating dashboard data without connecting to the database.
@@ -498,16 +498,7 @@ This is useful for sharing datasets or validating dashboard data without connect
 python scripts/export_views.py
 ```
 
-### 11. Simulate Full Workflow Locally
-Running all scripts manually helps confirm everything works locally before enabling the scheduled GitHub run.
-```bash
-python scripts/etl.py
-python scripts/create_views.py
-python scripts/generate_data.py
-python scripts/export_views.py
-```
-
-### 12. Check Logs
+### 11. Check Logs
 - Check log files inside the `logs/` folder :
   - `etl.log` : Initial data loading
   - `create_views.log` : SQL views creation
@@ -532,158 +523,6 @@ python scripts/export_views.py
 #### 1. `etl.py`
 - This script handles the first step of the process by preparing the database.
 
-<details>
-<summary>Click Here to view Sample Script</summary>
-<br>
-  
-```python
-# ---------------- Loading Python Packages ---------------- 
-
-# Importing Libraries
-import os
-import sys
-import logging
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text, inspect
-
-# ---------------- Configuration ---------------- 
-
-# Setting up Logging
-LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
-log_file = os.path.join(LOG_DIR, "etl.log")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S",
-                    handlers=[
-                        logging.FileHandler(log_file, mode="a"),
-                        logging.StreamHandler()
-                    ])
-
-# Adding utils to PYTHONPATH
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-# Loading Environment File
-load_dotenv()
-
-# Loading Database Credentials from Environment File
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-
-# Creating SQLAlchemy Engine to upload the Data to Neon PostgreSQL Database
-engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?sslmode=require&channel_binding=require", pool_pre_ping=True)
-logging.info("SQLAlchemy Engine created successfully")
-
-# ---------------- Check if Table Exists ----------------
-
-# Check if tables already exists in the Neon PostgreSQL Database
-inspector = inspect(engine)
-existing_tables = inspector.get_table_names()
-
-# If all required tables exist, skip ETL Setup
-if set(["customers", "products", "orders"]).issubset(existing_tables):
-    logging.info("Tables already exist. Skipping ETL setup.")
-else:
-    logging.info("Tables do not exist. Running ETL setup...")
-
-    # Reading CSV File
-    from utils.read_data import load_csv
-    df = load_csv("data", "sales_data.csv")
-    logging.info("CSV file loaded successfully")
-
-    # ---------------- Data Cleaning ---------------- 
-
-    # Handling Duplicate Data
-    from utils.drop_duplicates import remove_duplicates
-    df = remove_duplicates(df)
-
-    # Standardizing Column Names
-    from utils.standardize_columns import standardize_column_names
-    df = standardize_column_names(df)
-
-    # Optimizing DataFrame
-    from utils.data_preprocessor import optimize_dataframe
-    df = optimize_dataframe(df)
-
-    logging.info("Data cleaned and optimized successfully")
-
-    # ---------------- Schema Creation ----------------
-
-    # SQL Query to Create Schema
-    schema_sql = [
-    """
-    CREATE TABLE IF NOT EXISTS customers (
-        customer_id TEXT PRIMARY KEY,
-        customer_name TEXT,
-        segment TEXT,
-        city TEXT,
-        state TEXT,
-        country TEXT,
-        postal_code NUMERIC,
-        region TEXT
-    );
-    """
-    ,
-    """
-    CREATE TABLE IF NOT EXISTS products (
-        product_id TEXT PRIMARY KEY,
-        product_name TEXT,
-        category TEXT,
-        sub_category TEXT
-    );
-    """
-    ,
-    """
-    CREATE TABLE IF NOT EXISTS orders (
-        order_id TEXT PRIMARY KEY,
-        order_date DATE,
-        customer_id TEXT,
-        product_id TEXT,
-        ship_mode TEXT,
-        ship_date DATE,
-        sales NUMERIC,
-        quantity INTEGER,
-        discount NUMERIC,
-        profit NUMERIC,
-        FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-        FOREIGN KEY (product_id) REFERENCES products(product_id)
-    );
-    """]
-
-    # Creating Schema in Neon PostgreSQL Database
-    with engine.connect() as conn:
-        for stm in schema_sql:
-            conn.execute(text(stm))
-        conn.commit()
-    logging.info("Database schema created successfully")
-
-    # Customers Table
-    customers_cols = ["customer_id", "customer_name", "segment", "city", "state", "country", "postal_code", "region"]
-    customers = df[customers_cols].drop_duplicates(subset="customer_id")
-
-    # Products Table
-    products_cols = ["product_id", "product_name", "category", "sub_category"]
-    products = df[products_cols].drop_duplicates(subset="product_id")
-
-    # Orders Table
-    orders_cols = ["order_id", "order_date", "customer_id", "product_id", "ship_mode", "ship_date", "sales", "quantity", "discount", "profit"]
-    orders = df[orders_cols].drop_duplicates(subset="order_id")
-
-    # Truncate Tables to avoid uploading Duplicate Data
-    with engine.begin() as conn:
-        conn.execute(text("TRUNCATE TABLE customers CASCADE;"))
-        conn.execute(text("TRUNCATE TABLE products CASCADE;"))
-        conn.execute(text("TRUNCATE TABLE orders CASCADE;"))
-    logging.info("Tables truncated successfully")
-
-    # Appending data to the tables in Neon PostgreSQL Database
-    customers.to_sql("customers", engine, if_exists="append", index=False)
-    products.to_sql("products", engine, if_exists="append", index=False)
-    orders.to_sql("orders", engine, if_exists="append", index=False)
-    logging.info("Initial data uploaded to Neon PostgreSQL Database successfully")
-```
-</details>
-
 #### What does it do?
 - **Load Configuration**
   - Reads environment variables (like `DB_HOST`, `DB_NAME`) from a `.env` file for secure database access.
@@ -703,253 +542,6 @@ else:
 #### 2. `create_views.py`
 - This script builds SQL views in the PostgreSQL database to simplify analysis and reporting in Power BI.
 
-<details>
-<summary>Click Here to view Sample Script</summary>
-<br>
-  
-```python
-# ---------------- Loading Python Packages ---------------- 
-
-# Importing Libraries
-import os
-import logging
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
-
-# ---------------- Configuration ---------------- 
-
-# Setting up Logging
-LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
-log_file = os.path.join(LOG_DIR, "create_views.log")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S",
-                    handlers=[
-                        logging.FileHandler(log_file, mode="a"),
-                        logging.StreamHandler()
-                    ])
-
-# Loading Environment File
-load_dotenv()
-
-# Loading Database Credentials from Environment File
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-
-# Creating SQLAlchemy Engine to upload the Data to Neon PostgreSQL Database
-engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?sslmode=require&channel_binding=require", pool_pre_ping=True)
-logging.info("SQLAlchemy Engine created successfully")
-
-# ---------------- Creating Views in Neon PostgreSQL Database ----------------
-
-# Dictionary of SQL Views
-sql_views = {
-    "segment_wise_sales_and_profit":"""
-        DROP VIEW IF EXISTS segment_wise_sales_and_profit;
-        CREATE OR REPLACE VIEW segment_wise_sales_and_profit AS
-        SELECT 
-            c.segment,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.segment;
-    """
-    ,
-    "region_wise_sales_and_profit":"""
-        DROP VIEW IF EXISTS region_wise_sales_and_profit;
-        CREATE OR REPLACE VIEW region_wise_sales_and_profit AS
-        SELECT 
-            c.region,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.region;
-    """
-    ,
-    "month_wise_sales_and_profit":"""
-        DROP VIEW IF EXISTS month_wise_sales_and_profit;
-        CREATE OR REPLACE VIEW month_wise_sales_and_profit AS 
-        SELECT
-            TO_CHAR(order_date, 'Mon') AS month, 
-            SUM(sales) AS total_sales,
-            SUM(profit) AS total_profit
-        FROM orders
-        GROUP BY month;
-    """
-    ,
-    "top_customers_by_sales":"""
-        DROP VIEW IF EXISTS top_customers_by_sales;
-        CREATE OR REPLACE VIEW top_customers_by_sales AS
-        SELECT
-            c.customer_id, 
-            c.customer_name,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.customer_id, c.customer_name;
-    """
-    ,
-    "shipping_performance":"""
-        DROP VIEW IF EXISTS shipping_performance;
-        CREATE OR REPLACE VIEW shipping_performance AS 
-        SELECT 
-            ship_mode,
-            SUM(sales) AS total_sales,
-            SUM(profit) AS total_profit
-        FROM orders
-        GROUP BY ship_mode;
-    """
-    ,
-    "overall_sales_performance":"""
-        DROP VIEW IF EXISTS overall_sales_performance;
-        CREATE OR REPLACE VIEW overall_sales_performance AS
-        SELECT
-            SUM(sales) AS total_sales,
-            SUM(profit) AS total_profit,
-            COUNT(DISTINCT order_id) AS total_orders,
-            COUNT(DISTINCT customer_id) AS total_customers,
-            COUNT(DISTINCT product_id) AS total_products,
-            SUM(quantity) AS total_quantity_sold
-        FROM orders;
-    """
-    ,
-    "state_wise_sales_and_customer_base":"""
-        DROP VIEW IF EXISTS state_wise_sales_and_customer_base;
-        CREATE OR REPLACE VIEW state_wise_sales_and_customer_base AS 
-        SELECT
-            c.state,
-            SUM(o.sales) AS total_sales,
-            COUNT(DISTINCT c.customer_id) AS total_customers
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.state;
-    """
-    ,
-    "segment_wise_monthly_sales_and_profit":"""
-        DROP VIEW IF EXISTS segment_wise_monthly_sales_and_profit;
-        CREATE OR REPLACE VIEW segment_wise_monthly_sales_and_profit AS
-        SELECT
-            c.segment,
-            TO_CHAR(o.order_date, 'Mon') AS month_name,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.segment, month_name;
-    """
-    ,
-    "region_wise_monthly_sales":"""
-        DROP VIEW IF EXISTS region_wise_monthly_sales;
-        CREATE OR REPLACE VIEW region_wise_monthly_sales AS
-        SELECT
-            c.region,
-            TO_CHAR(o.order_date, 'Mon') AS month_name,
-            SUM(o.sales) AS total_sales
-        FROM orders AS o
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.region, month_name;
-    """
-    ,
-    "overall_customers_performance":"""
-        DROP VIEW IF EXISTS overall_customers_performance;
-        CREATE OR REPLACE VIEW overall_customers_performance AS
-        SELECT 
-            ROUND(SUM(o.sales)/COUNT(DISTINCT o.customer_id)) AS avg_sales_per_customer,
-            ROUND(SUM(o.profit)/COUNT(DISTINCT o.customer_id)) AS avg_profit_per_customer,
-            ROUND(COUNT(DISTINCT order_id)/COUNT(DISTINCT customer_id)) AS avg_orders_per_customer,
-            ROUND(SUM(o.quantity)/COUNT(DISTINCT o.customer_id)) AS avg_quantity_per_customer
-        FROM orders AS o;
-    """
-    ,
-    "avg_discount_per_order_per_customer":"""
-        DROP VIEW IF EXISTS avg_discount_per_order_per_customer;
-        CREATE OR REPLACE VIEW avg_discount_per_order_per_customer AS
-        SELECT
-            ROUND(AVG(customer_avg), 2) AS avg_discount_per_customer
-        FROM (
-            SELECT customer_id, AVG(discount) AS customer_avg
-            FROM orders
-            GROUP BY customer_id
-        ) AS sub;
-    """
-    ,
-    "category_wise_monthly_sales_and_profit":"""
-        DROP VIEW IF EXISTS category_wise_monthly_sales_and_profit;
-        CREATE OR REPLACE VIEW category_wise_monthly_sales_and_profit AS
-        SELECT
-            p.category,
-            TO_CHAR(o.order_date, 'Mon') AS month,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN products AS p
-        ON o.product_id = p.product_id
-        GROUP BY p.category, month;
-    """
-    ,
-    "sub_category_wise_sales_and_profit":"""
-        DROP VIEW IF EXISTS sub_category_wise_sales_and_profit;
-        CREATE OR REPLACE VIEW sub_category_wise_sales_and_profit AS
-        SELECT
-            p.sub_category,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit
-        FROM orders AS o
-        JOIN products AS p
-        ON o.product_id = p.product_id
-        GROUP BY p.sub_category;
-    """
-    ,
-    "category_wise_sales_profit_and_orders":"""
-        DROP VIEW IF EXISTS category_wise_sales_profit_and_orders;
-        CREATE OR REPLACE VIEW category_wise_sales_profit_and_orders AS
-        SELECT
-            p.category,
-            SUM(o.sales) AS total_sales,
-            SUM(o.profit) AS total_profit,
-            COUNT(DISTINCT o.order_id) AS total_orders
-        FROM orders AS o
-        JOIN products AS p
-        ON o.product_id = p.product_id
-        GROUP BY p.category;
-    """
-    ,
-    "state_wise_most_purchased_sub_category":"""
-        DROP VIEW IF EXISTS state_wise_most_purchased_sub_category;
-        CREATE OR REPLACE VIEW state_wise_most_purchased_sub_category AS
-        SELECT
-            c.state,
-            p.sub_category, 
-            SUM(o.quantity) AS quantity_sold,
-            RANK() OVER (PARTITION BY c.state ORDER BY SUM(o.quantity) DESC) AS sub_category_rank
-        FROM orders AS o
-        JOIN products AS p
-        ON o.product_id = p.product_id
-        JOIN customers AS c
-        ON o.customer_id = c.customer_id
-        GROUP BY c.state, p.sub_category;
-    """
-}
-
-# Creating Views in Neon PostgreSQL Database
-with engine.connect() as conn:
-    for view_name, sql_query in sql_views.items():
-        conn.execute(text(sql_query))
-    conn.commit()
-logging.info("Views created successfully in Neon PostgreSQL Database")
-```
-</details>
-
 #### What does it do?
 - **Database Connection**
   - Connects to the database securely using environment variables.
@@ -964,91 +556,6 @@ logging.info("Views created successfully in Neon PostgreSQL Database")
 
 #### 3. `generate_data.py`
 - This script keeps the database updated with new transaction data for scheduled data refresh in Power BI.
-
-<details>
-<summary>Click Here to view Sample Script</summary>
-<br>
-
-```python
-# ---------------- Loading Python Packages ---------------- 
-
-# Importing Libraries
-import os
-import sys
-import logging
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-
-# ---------------- Configuration ---------------- 
-
-# Setting up Logging
-LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
-log_file = os.path.join(LOG_DIR, "generate_data.log")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S",
-                    handlers=[
-                        logging.FileHandler(log_file, mode="a"),
-                        logging.StreamHandler()
-                    ])
-
-# Adding utils to PYTHONPATH
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-# Loading Environment File
-load_dotenv()
-
-# Loading Database Credentials from Environment File
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-
-# Creating SQLAlchemy Engine to upload the Data to Neon PostgreSQL Database
-engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?sslmode=require&channel_binding=require", pool_pre_ping=True)
-logging.info("SQLAlchemy Engine created successfully")
-
-# ---------------- Generating Random Customers Data ---------------- 
-
-# Generating New Customers Data Randomly
-from utils.generate_random_data import random_customers_data
-customers = random_customers_data(20, 40)
-logging.info("Random customers data generated successfully")
-
-# ---------------- Generating Random Orders Data ---------------- 
-
-# Generating New Orders Data Randomly
-from utils.generate_random_data import random_orders_data
-orders = random_orders_data(60, 80)
-logging.info("Random orders data generated successfully")
-
-# ---------------- Data Cleaning ---------------- 
-
-# Handling Duplicate Data
-from utils.drop_duplicates import remove_duplicates
-customers = remove_duplicates(customers)
-orders = remove_duplicates(orders)
-
-# Standardizing Column Names
-from utils.standardize_columns import standardize_column_names
-customers = standardize_column_names(customers)
-orders = standardize_column_names(orders)
-
-# Optimizing DataFrame
-from utils.data_preprocessor import optimize_customers, optimize_orders
-customers = optimize_customers(customers)
-orders = optimize_orders(orders)
-
-logging.info("Data cleaned and optimized successfully")
-
-# ---------------- Appending New Data to Neon PostgreSQL Database ---------------- 
-
-# Appending new and unique data to Neon PostgreSQL Database
-from utils.append_data import append_unique_data_to_db
-append_unique_data_to_db("customers", customers, "customer_id", engine)
-append_unique_data_to_db("orders", orders, "order_id", engine)
-logging.info("New data uploaded to database successfully")
-```
-</details>
 
 #### What does it do?
 - **Generate Random Data**
@@ -1081,19 +588,19 @@ This section summarizes pipeline performance metrics such as runtime, automation
 ### 1. Data Loading Overview
 | **Parameter**          | **Value**                         |
 | :--------------------- | :-------------------------------- |
-| **Dataset Size**       | ~50,000 sales records             |
+| **Dataset Size**       | \~50,000 sales records             |
 | **Tables Used**        | `customers`, `orders`, `products` |
-| **Avg. Daily Inserts** | ~100 new records                  |
+| **Avg. Daily Inserts** | \~100 new records                  |
 | **Database**           | Neon PostgreSQL (cloud-hosted)    |
 
 > [!NOTE]
-> This setup simulates real-time superstore sales activity with daily updates to the `orders` and `customers` tables.
+> This setup simulates ongoing business activity with daily updates to the `orders` and `customers` tables.
 
 <hr>
 
 ### 2. Automation & Scheduling
 | **Attribute**           | **Details**                                         |
-| ----------------------- | :-------------------------------------------------- |
+| :---------------------- | :-------------------------------------------------- |
 | **Automation Tool**     | GitHub Actions                                      |
 | **Execution Frequency** | Daily                                               |
 | **Scheduled Time**      | 10:00 AM IST                                        |
@@ -1103,36 +610,32 @@ This section summarizes pipeline performance metrics such as runtime, automation
 > [!NOTE]
 > This setup ensures that the latest data is always available for Power BI dashboards, with no manual effort.
 
-<img title="Automation & Scheduling" src="https://github.com/user-attachments/assets/0708e2eb-6511-4962-bb36-2c77752a8f47">
-
 <hr>
 
 ### 3. Runtime Performance
-| **Workflow Step**                    | **Description**                                      | **Runtime (sec)** |
-| :----------------------------------- | :--------------------------------------------------- | :---------------: |
-| **Set up job**                       | Initializes GitHub Actions environment               |        1s         |
-| **Checkout repository**              | Pulls repository code into the runner                |        1s         |
-| **Set up Python**                    | Installs Python environment (v3.12)                  |        0s         |
-| **Install dependencies**             | Installs libraries from `requirements.txt`           |        22s        |
-| **Run ETL Script**                   | Extracts, transforms, and loads data into PostgreSQL |        3s         |
-| **Run Generate Data Script**         | Generates new synthetic customer and order data      |        4s         |
-| **Run Views Script**                 | Creates / Refreshes analytical SQL views             |        3s         |
-| **Run Export Views Script**          | Exports SQL views as CSV files                       |        2s         |
-| **Upload Exported CSV as Artifacts** | Uploads exported CSVs to GitHub Actions artifacts    |        2s         |
-| **Commit and Push CSVs**             | Commits CSV files to the repository                  |        0s         |
-| **Upload Logs as Artifacts**         | Uploads log files for debugging and tracking         |        1s         |
-| **Post Setup / Cleanup Steps**       | Cleans the environment post-run                      |        2s         |
+| **Workflow Step**                    | **Description**                                      |
+| :----------------------------------- | :--------------------------------------------------- |
+| **Set up job**                       | Initializes GitHub Actions environment               |
+| **Checkout repository**              | Pulls repository code into the runner                |
+| **Set up Python**                    | Installs Python environment (v3.12)                  |
+| **Install dependencies**             | Installs libraries from `requirements.txt`           |
+| **Run ETL Script**                   | Extracts, transforms, and loads data into PostgreSQL |
+| **Run Generate Data Script**         | Generates new synthetic customer and order data      |
+| **Run Views Script**                 | Creates / Refreshes analytical SQL views             |
+| **Run Export Views Script**          | Exports SQL views as CSV files                       |
+| **Upload Exported CSV as Artifacts** | Uploads exported CSVs to GitHub Actions artifacts    |
+| **Commit and Push CSVs**             | Commits CSV files to the repository                  |
+| **Upload Logs as Artifacts**         | Uploads log files for debugging and tracking         |
+| **Post Setup / Cleanup Steps**       | Cleans the environment post-run                      |
 
 > [!NOTE]
-> **Total runtime :** ~45–50 seconds per pipeline run
+> **Total runtime :** \~47 seconds per pipeline run
 > 
 > **Scheduling :** The workflow runs daily at **10:00 AM IST** using a `cron` schedule (`30 4 * * *`).
 >
 > `cron` is in UTC (04:30 UTC = 10:00 AM IST)
 > 
 > The ETL pipeline runs within a minute, automatically refreshing dashboard data daily with no manual effort.
-
-<img title="Runtime Performance" src="https://github.com/user-attachments/assets/8dcf62d2-9bb8-4ef4-b0c4-292115dc5079">
 
 <hr>
 
@@ -1152,15 +655,13 @@ This section summarizes pipeline performance metrics such as runtime, automation
 ### 5. Reliability and Stability
 | **Metric**                | **Value**                | **Remarks**                                |
 | :------------------------ | :----------------------- | :----------------------------------------- |
-| **Total Runtime**         | ~48 seconds              | Fast for a daily automated ETL pipeline    |
+| **Total Runtime**         | \~47 seconds              | Fast for a daily automated ETL pipeline    |
 | **Success Rate**          | 100% (till last run)     | Verified via GitHub Actions workflow panel |
-| **Avg. Records Inserted** | ~100 rows/day            | Lightweight daily incremental updates      |
+| **Avg. Records Inserted** | \~100 rows/day            | Lightweight daily incremental updates      |
 | **Resource Utilization**  | Low CPU and memory usage | Efficient for cloud runners                |
 
 > [!IMPORTANT]
 > The pipeline runs fully unattended, ensuring consistent daily data updates and automatic Power BI refreshes.
-
-<img title="Reliability and Stability" src="https://github.com/user-attachments/assets/20dbee9f-b68e-4a1a-b512-4ed7f443d587">
 
 <hr>
 
@@ -1168,7 +669,7 @@ This section summarizes pipeline performance metrics such as runtime, automation
 This section highlights key business insights and trends derived from the Power BI dashboard visualizations.
 
 ### 1. Shipping Mode Performance
-| **Shipping Mode** | **Total Sales (₹)** | **% of Total Sales** | **Total Profit (₹)** | **% of Total Profit** | **Profit Margin** |
+| **Shipping Mode** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
 | ----------------- | ------------------: | -------------------: | -------------------: | --------------------: | ----------------: |
 | Standard Class    |           5,099,197 |            **59.7%** |              897,360 |             **59.8%** |         **17.6%** |
 | Second Class      |           1,650,059 |            **19.3%** |              292,629 |             **19.5%** |         **17.7%** |
@@ -1179,19 +680,19 @@ This section highlights key business insights and trends derived from the Power 
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- Standard Class drives ~60% of total sales (~₹5.1M) and profit (~₹897K), making it the dominant shipping mode.
-- Second Class contributes ~19% of sales (~₹1.65M) and profit (~₹293K), showing steady usage.
-- First Class accounts for ~16% of sales (~₹1.34M) and ~15% of profit (~₹231K), preferred for faster delivery.
-- Same Day contributes ~5% of sales (~₹0.44M) and profit (~₹79K), lowest usage but fastest option.
-- Profit margins remain consistent across modes (~17-18%), indicating stable logistics and pricing control.
+- Standard Class drives \~60% of total sales (\~$5.1M) and profit (\~$897K), making it the dominant shipping mode.
+- Second Class contributes \~19% of sales (\~$1.65M) and profit (\~$293K), showing steady usage.
+- First Class accounts for \~16% of sales (\~$1.34M) and \~15% of profit (\~$231K), preferred for faster delivery.
+- Same Day contributes \~5% of sales (\~$0.44M) and profit (\~$79K), lowest usage but fastest option.
+- Profit margins remain consistent across modes (\~17-18%), indicating stable logistics and pricing control.
 
 </details>
 
 <hr>
 
 ### 2. Customer Segment Performance
-| **Segment** | **Total Sales (₹)** | **% of Total Sales** | **Total Profit (₹)** | **% of Total Profit** | **Profit Margin** |
-| ----------- | ------------------: | -------------------: | -------------------: | --------------------: | ----------------: |
+| **Segment** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
+| ----------- | ------------------- | -------------------- | -------------------- | --------------------- | ----------------- |
 | Consumer    |           4,263,570 |            **49.9%** |              757,416 |             **50.5%** |         **17.8%** |
 | Corporate   |           2,742,160 |            **32.1%** |              475,855 |             **31.7%** |         **17.4%** |
 | Home Office |           1,528,321 |            **17.9%** |              266,483 |             **17.8%** |         **17.4%** |
@@ -1200,9 +701,9 @@ This section highlights key business insights and trends derived from the Power 
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- Consumer Segment is the main revenue driver, generating ~50% of total sales (~₹4.26M) and profit (~₹757K).
-- Corporate Segment contributes ~32% of sales (~₹2.74M) and profit (~₹476K), indicating steady performance.
-- Home Office delivers ~18% of revenue (~₹1.53M) and profit (~₹266K), smaller but reliable.
+- Consumer Segment is the main revenue driver, generating \~50% of total sales (\~$4.26M) and profit (\~$757K).
+- Corporate Segment contributes \~32% of sales (\~$2.74M) and profit (\~$476K), indicating steady performance.
+- Home Office delivers \~18% of revenue (\~$1.53M) and profit (\~$266K), smaller but reliable.
 - Potential growth opportunity lies in expanding Home Office sales through targeted marketing.
 
 </details>
@@ -1210,8 +711,8 @@ This section highlights key business insights and trends derived from the Power 
 <hr>
 
 ### 3. Monthly Sales & Profit Performance
-| **Month** | **Total Sales (₹)** | **% of Total Sales** | **Total Profit (₹)** | **% of Total Profit** | **Profit Margin** |
-| :-------- | ------------------: | -------------------: | -------------------: | --------------------: | ----------------: |
+| **Month** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
+| --------- | ------------------- | -------------------- | -------------------- | --------------------- | ----------------- |
 | Jan       |             731,193 |             **8.6%** |              130,941 |              **8.7%** |         **17.9%** |
 | Feb       |             666,688 |             **7.8%** |              119,076 |              **7.9%** |         **17.9%** |
 | Mar       |             765,028 |             **9.0%** |              131,184 |              **8.7%** |         **17.1%** |
@@ -1229,9 +730,9 @@ This section highlights key business insights and trends derived from the Power 
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- Q4 (Oct-Dec) drives ~27% of annual sales and profit, making it the strongest quarter for promotions.
-- Profit margins stay steady at ~17-18% throughout the year, indicating consistent pricing and cost control.
-- December and March are peak months by sales contribution, ideal for marketing campaigns and seasonal offers.
+- Q4 (Oct-Dec) drives \~27% of annual sales and profit, making it the strongest quarter for promotions.
+- Profit margins stay steady at \~17-18% throughout the year, indicating consistent pricing and cost control.
+- December and October are peak months by sales contribution, ideal for marketing campaigns and seasonal offers.
 - Sales and profit are evenly distributed across months, reflecting stable and predictable performance.
 
 </details>
@@ -1239,46 +740,46 @@ This section highlights key business insights and trends derived from the Power 
 <hr>
 
 ### 4. Regional Performance Insights
-| **Region**  | **Total Sales (₹)** | **% of Total Sales** | **Total Profit (₹)** | **% of Total Profit** |
-| ----------- | ------------------: | -------------------: | -------------------: | --------------------: |
-| **West**    |           2,484,870 |                 ~29% |              440,814 |                  ~29% |
-| **East**    |           2,456,014 |                 ~29% |              427,689 |                  ~28% |
-| **Central** |           1,986,280 |                 ~23% |              352,400 |                  ~23% |
-| **South**   |           1,606,887 |                 ~19% |              278,851 |                  ~19% |
+| **Region**  | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** |
+| ----------- | ------------------- | -------------------- | -------------------- | --------------------- |
+| **West**    |           2,484,870 |                 \~29% |              440,814 |                  \~29% |
+| **East**    |           2,456,014 |                 \~29% |              427,689 |                  \~28% |
+| **Central** |           1,986,280 |                 \~23% |              352,400 |                  \~23% |
+| **South**   |           1,606,887 |                 \~19% |              278,851 |                  \~19% |
 
 <details>
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- West leads with ~29% of revenue (~₹2.48M) and profit (~₹441K), making it the top-performing region.
-- East contributes ~29% of sales (~₹2.46M) and ~28% of profit (~₹428K), showing strong and balanced growth.
-- Central adds ~23% of revenue (~₹1.99M) and profit (~₹352K), reflecting steady mid-level performance.
-- South accounts for ~19% of revenue (~₹1.61M) and profit (~₹279K), highlighting a key growth opportunity.
+- West leads with \~29% of revenue (\~$2.48M) and profit (\~$441K), making it the top-performing region.
+- East contributes \~29% of sales (\~$2.46M) and \~28% of profit (\~$428K), showing strong and balanced growth.
+- Central adds \~23% of revenue (\~$1.99M) and profit (\~$352K), reflecting steady mid-level performance.
+- South accounts for \~19% of revenue (\~$1.61M) and profit (\~$279K), highlighting a key growth opportunity.
 
 </details>
 
 <hr>
 
 ### 5. Sub-Category Performance
-| **Sub-Category**          | **Total Sales (₹)** | **% of Total Sales** | **Total Profit (₹)** | **% of Total Profit** |
-| ------------------------- | ------------------: | -------------------: | -------------------: | --------------------: |
-| Paper                     |           1,260,080 |                 ~15% |              223,147 |                  ~15% |
-| Binders                   |             943,376 |                 ~11% |              162,084 |                  ~11% |
-| Phones                    |             879,975 |                 ~10% |              153,018 |                  ~10% |
-| Furnishings               |             836,955 |                 ~10% |              151,623 |                  ~10% |
-| Art                       |             697,965 |                  ~8% |              120,843 |                   ~8% |
-| Storage                   |             651,268 |                  ~8% |              112,673 |                   ~8% |
-| Accessories               |             643,638 |                  ~7% |              112,007 |                   ~7% |
-| Appliances                |             495,030 |                  ~6% |               90,786 |                   ~6% |
+| **Sub-Category**          | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** |
+| ------------------------- | ------------------- | -------------------- | -------------------- | --------------------- |
+| Paper                     |           1,260,080 |                 \~15% |              223,147 |                  \~15% |
+| Binders                   |             943,376 |                 \~11% |              162,084 |                  \~11% |
+| Phones                    |             879,975 |                 \~10% |              153,018 |                  \~10% |
+| Furnishings               |             836,955 |                 \~10% |              151,623 |                  \~10% |
+| Art                       |             697,965 |                  \~8% |              120,843 |                   \~8% |
+| Storage                   |             651,268 |                  \~8% |              112,673 |                   \~8% |
+| Accessories               |             643,638 |                  \~7% |              112,007 |                   \~7% |
+| Appliances                |             495,030 |                  \~6% |               90,786 |                   \~6% |
 | Others (8 sub-categories) |                   — |                    — |                    — |                     — |
 
 <details>
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- Paper is the top-performing sub-category, contributing ~15% of total sales (~₹1.26M) and profit (~₹223K).
-- Binders, Phones, and Furnishings contribute ~31% of total profit (~₹467K), forming the high-performing cluster.
-- Art, Storage, and Accessories are solid mid-tier performers, contributing ~23% of total profit combined.
+- Paper is the top-performing sub-category, contributing \~15% of total sales (\~$1.26M) and profit (\~$223K).
+- Binders, Phones, and Furnishings contribute \~31% of total profit (\~$466K), forming the high-performing cluster.
+- Art, Storage, and Accessories are solid mid-tier performers, contributing \~23% of total profit combined.
 - Sub-categories like Copiers and Supplies contribute <5% of total profit, showing limited business impact.
 - Scaling high-value categories (Paper, Phones, Furnishings) can boost revenue while maintaining stable margins.
 
@@ -1287,8 +788,8 @@ This section highlights key business insights and trends derived from the Power 
 <hr>
 
 ### 6. State-wise Sales Performance
-| **State**    | **Total Sales (₹)** | **Total Customers** | **% of Total Sales** |
-| :----------- | ------------------: | ------------------: | -------------------: |
+| **State**    | **Total Sales ($)** | **Total Customers** | **% of Total Sales** |
+| :----------- | ------------------- | ------------------- | -------------------- |
 | California   |           1,792,545 |                 188 |            **21.4%** |
 | New York     |             924,728 |                 104 |            **11.0%** |
 | Texas        |             903,046 |                  92 |            **10.8%** |
@@ -1299,9 +800,9 @@ This section highlights key business insights and trends derived from the Power 
 <summary>Click Here to view Key Insights</summary>
 &nbsp;
 
-- California leads with ~21% sales (~₹1.8M) and the highest customer base (188), making it the strongest market.
-- New York + Texas contribute ~22% of total sales (~₹1.83M), indicating strong demand in dense regions.
-- Top 5 states generate ~54% of total revenue (~₹4.54M), highlighting sales concentration in key markets.
+- California leads with \~21% sales (\~$1.8M) and the highest customer base (188), making it the strongest market.
+- New York + Texas contribute \~22% of total sales (\~$1.83M), indicating strong demand in dense regions.
+- Top 5 states generate \~54% of total revenue (\~$4.54M), highlighting sales concentration in key markets.
 
 </details>
 
@@ -1309,20 +810,20 @@ This section highlights key business insights and trends derived from the Power 
 
 ## Impact
 
-- Improved daily data update time from hours to under a minute (average ~45 seconds) using GitHub Actions.
-- Reduced reporting time by 80% through automation, enabling faster tracking of revenue and profit.
-- Achieved 100% workflow reliability with zero pipeline failures since deployment (as recorded in GitHub Actions).
+- Automated the workflow using GitHub Actions, achieving zero failures across 200+ runs at \~47 seconds each.
+- Simulated \~100 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
+- Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
 
 <hr>
 
 ## Key Insights
 
-- Standard Class drives ~60% of sales (₹5.1M) and profit (₹897K), making it the most profitable shipping mode.
-- Consumer Segment generates ~50% of revenue (~₹4.26M) and profit (~₹757K), our primary customer base.
-- Q4 (Oct-Dec) contributes ~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
-- Paper, Binders, and Phones are the top-performing sub-categories, together making up ~45% of total revenue.
-- West and East regions lead with ~58% of total sales, while the South with ~19% shows strong growth potential.
-- Top 5 States (CA, NY, TX, PA, OH) generate ~54% of total sales, with CA alone contributing ~21% of sales.
+- Standard Class drives \~60% of sales ($5.1M) and profit ($897K), making it the top profit-driving shipping mode.
+- Consumer Segment generates \~50% of revenue (\~$4.26M) and profit (\~$757K), our primary customer base.
+- Q4 (Oct-Dec) contributes \~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
+- Paper, Binders, and Phones are the top-performing sub-categories, together making up \~36% of total revenue.
+- West and East regions lead with \~58% of total sales, while the South with \~19% shows strong growth potential.
+- Top 5 States (CA, NY, TX, PA, OH) generate \~54% of total sales, with CA alone contributing \~21% of sales.
 
 <hr>
 
@@ -1482,8 +983,8 @@ DB_NAME=dbname
 
 - Open your local `.env` file (this file contains environment variables like API keys, tokens, etc).
 - For each variable, copy :
-  - Name : the key (`DATABASE_URL`)
-  - Value : the corresponding value (`postgres://user:pass@host/db`)
+  - Name : the key (`DB_HOST`)
+  - Value : the corresponding value (`ep-cool-darkness-a1b2c3d4-pooler.us-east-2.aws.neon.tech`)
 - Paste these into the GitHub form fields :
   - Name ➜ enter the variable name
   - Secret ➜ enter the variable value
@@ -1898,28 +1399,24 @@ Dashly/
 ├── .github/
 │   └── workflows/
 │       └── etl_pipeline.yaml        # GitHub Actions Workflow File
-│
-├── scripts/
-│   ├── etl.py                       # Script to extract, transform, and load Initial Data
-│   ├── generate_data.py             # Script to generate and append New Random Data
-│   ├── create_views.py              # Script to create or refresh SQL Views in PostgreSQL Database
-│   └── export_views.py              # Script to export SQL Views results as CSV File
-│
+|
 ├── data/
 │   └── sales_data.csv               # Original Raw Dataset
 |
 ├── database/
 │   ├── schema.sql                   # Database Schema
 │   └── views.sql                    # SQL Views
-│
-├── views/
-│   ├── shipping_performance.csv     # Exported SQL Views as CSV Files
-│   └── ...
 |
 ├── images/
 │   ├── banner.png                   # Banner for Home Page
 │   ├── shopping-cart.png            # Multi-Row Card Image
 |   └── ...
+|
+├── scripts/
+│   ├── etl.py                       # Script to extract, transform, and load Initial Data
+│   ├── generate_data.py             # Script to generate and append New Random Data
+│   ├── create_views.py              # Script to create or refresh SQL Views in PostgreSQL Database
+│   └── export_views.py              # Script to export SQL Views results as CSV File
 │
 ├── utils/                           # Reusable Python Functions (utils Package)
 │   ├── __init__.py
@@ -1927,11 +1424,15 @@ Dashly/
 │   ├── generate_random_data.py
 |   └── ...
 |
-├── Dashboard.pbix                   # Power BI Dashboard File
+├── views/
+│   ├── shipping_performance.csv     # Exported SQL Views as CSV Files
+│   └── ...
+|
 ├── .gitignore                       # All files and folders ignored by Git
-├── requirements.txt                 # List of required libraries for the Project
+├── Dashboard.pbix                   # Power BI Dashboard File
 ├── LICENSE                          # License specifying permissions and usage rights
-└── README.md                        # Detailed documentation of the Project
+├── README.md                        # Detailed documentation of the Project
+└── requirements.txt                 # List of required libraries for the Project
 ```
 
 <hr>
@@ -1941,6 +1442,6 @@ This project is licensed under the [MIT License](LICENSE). You are free to use a
 
 <div align='left'>
   
-**[`^        Scroll to Top       ^`](#dashly--live-sales-dashboard)**
+**[`^        Scroll to Top       ^`](#top)**
 
 </div>
