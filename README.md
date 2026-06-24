@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Power BI](https://img.shields.io/badge/Live-Dashboard-F2C811?style=flat&logo=codeforces&logoColor=white)](https://app.powerbi.com/view?r=eyJrIjoiZTgxODBhYmMtYjc1Zi00YjVkLWIyZDItZDYxY2RjZmIwNGY5IiwidCI6ImZhYjAyYzVkLTYxYjYtNGIxMi05ZTY2LTdhMDhkOWY0ZmNjMSJ9&pageName=5b9aaf645951a59cacdc)
+[![Power BI](https://img.shields.io/badge/Live-Dashboard-F2C811?style=flat&logoColor=white)](https://app.powerbi.com/view?r=eyJrIjoiZTgxODBhYmMtYjc1Zi00YjVkLWIyZDItZDYxY2RjZmIwNGY5IiwidCI6ImZhYjAyYzVkLTYxYjYtNGIxMi05ZTY2LTdhMDhkOWY0ZmNjMSJ9&pageName=5b9aaf645951a59cacdc)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-08872B?style=flat&logo=githubactions&logoColor=white)](https://github.com/themrityunjaypathak/Dashly/actions/workflows/etl_pipeline.yaml)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Pandas](https://img.shields.io/badge/Pandas-4420C7?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
@@ -39,27 +39,25 @@
 ## Problem Statement
 Quick Buy is a superstore operating across the United States.
 
-Currently, the store relies heavily on multiple spreadsheets and ad-hoc SQL queries to track business performance.
+Currently, the store relies heavily on spreadsheets and ad-hoc SQL queries to track business performance.
 - This manual process makes it :
-  - Hard to keep data structured and consistent.
+  - Harder to keep the data structured and consistent.
   - Time-consuming to prepare reports.
-  - Difficult to manually update daily transaction data.
+  - Difficult to update and maintain daily transaction records.
   - Challenging for non-technical users to understand key business insights.
     
-- To solve these challenges, Quick Buy aims to build an automated system that :
+- To solve these challenges, Quick Buy built an automated system that :
   - Collects and stores all data in a structured database.
-  - Cleans and updates data automatically using an ETL pipeline.
-  - Uses SQL to analyze data and extract meaningful business insights.
+  - Cleans, updates, and analyzes data automatically using an ETL pipeline and SQL views.
   - Displays insights through an interactive Power BI dashboard.
-  - Helps managers and executives quickly understand business performance and make better decisions.
+  - Helps managers and executives understand business performance and make informed decisions.
 
 <hr>
 
 ## Overview
-- Designed a fully automated ETL pipeline using Python, SQLAlchemy, and GitHub Actions for daily data updates.
-- Built Python ETL scripts to extract, transform, and load 50,000+ sales records into a Neon PostgreSQL database.
-- Simulated \~100 new transactions daily to replicate ongoing business activity and test pipeline reliability.
-- Integrated Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
+- Designed an ETL pipeline with Python and SQLAlchemy to load 50,000+ sales records into a PostgreSQL database.
+- Simulated \~100 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
+- Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
 
 <hr>
 
@@ -414,7 +412,6 @@ pip install --upgrade pip
 ### 5. Setup Environment Variables
 This project uses a `.env` file to store database credentials like `DB_USER`, `DB_PASS`, `DB_NAME`, etc.
 
-Environment variables are stored in plain text.
 ```ini
 # .env
 DB_HOST=host_name
@@ -466,7 +463,7 @@ engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?ss
 This initializes the database and :
 - Cleans raw CSV data
 - Creates tables (`customers`, `orders`, `products`)
-- Loads data into the Neon PostgreSQL Database
+- Loads data into the Neon PostgreSQL database
 ```bash
 python scripts/etl.py
 ```
@@ -509,14 +506,14 @@ python scripts/export_views.py
 
 ## ETL Pipeline
 - The ETL (Extract, Transform, Load) pipeline is the core part of this project.
-- It automatically cleans and loads validated sales data into a PostgreSQL database for the Power BI dashboard.
+- It automatically cleans and loads sales data into a PostgreSQL database for the Power BI dashboard.
 - It is built with Python using SQLAlchemy and is securely configured via environment variables.
 
 ### ETL Pipeline Structure
 | **Script Name**    | **Purpose**                                                                                  |
 | :----------------- | :------------------------------------------------------------------------------------------- |
 | `etl.py`           | Sets up the database schema, cleans the dataset, and loads initial data into the database.   |
-| `create_views.py`  | Creates multiple SQL views that summarize and aggregate data for Power BI dashboard.         |
+| `create_views.py`  | Creates multiple SQL views that summarize and aggregate data for the Power BI dashboard.     |
 | `generate_data.py` | Generates random synthetic transaction data to simulate daily updates in the database.       |
 
 ### How does the ETL pipeline work?
@@ -546,7 +543,7 @@ python scripts/export_views.py
 - **Database Connection**
   - Connects to the database securely using environment variables.
 - **Define SQL Views**
-  - Creates multiple SQL views to extract key business insights.
+  - Creates multiple SQL views to summarize and aggregate key business insights.
 - **Execute & Commit**
   - Executes each `CREATE OR REPLACE VIEW` statement and commits changes.
 - **Logging Setup**
@@ -656,7 +653,7 @@ This section summarizes pipeline performance metrics such as runtime, automation
 | **Metric**                | **Value**                | **Remarks**                                |
 | :------------------------ | :----------------------- | :----------------------------------------- |
 | **Total Runtime**         | \~47 seconds              | Fast for a daily automated ETL pipeline    |
-| **Success Rate**          | 100% (till last run)     | Verified via GitHub Actions workflow panel |
+| **Success Rate**          | 100%                      | Verified via GitHub Actions workflow panel |
 | **Avg. Records Inserted** | \~100 rows/day            | Lightweight daily incremental updates      |
 | **Resource Utilization**  | Low CPU and memory usage | Efficient for cloud runners                |
 
@@ -733,7 +730,7 @@ This section highlights key business insights and trends derived from the Power 
 - Q4 (Oct-Dec) drives \~27% of annual sales and profit, making it the strongest quarter for promotions.
 - Profit margins stay steady at \~17-18% throughout the year, indicating consistent pricing and cost control.
 - December and October are peak months by sales contribution, ideal for marketing campaigns and seasonal offers.
-- Sales and profit are evenly distributed across months, reflecting stable and predictable performance.
+- Sales and profit are relatively evenly distributed across months, reflecting stable and predictable performance.
 
 </details>
 
@@ -780,7 +777,6 @@ This section highlights key business insights and trends derived from the Power 
 - Paper is the top-performing sub-category, contributing \~15% of total sales (\~$1.26M) and profit (\~$223K).
 - Binders, Phones, and Furnishings contribute \~31% of total profit (\~$466K), forming the high-performing cluster.
 - Art, Storage, and Accessories are solid mid-tier performers, contributing \~23% of total profit combined.
-- Sub-categories like Copiers and Supplies contribute <5% of total profit, showing limited business impact.
 - Scaling high-value categories (Paper, Phones, Furnishings) can boost revenue while maintaining stable margins.
 
 </details>
@@ -811,15 +807,15 @@ This section highlights key business insights and trends derived from the Power 
 ## Impact
 
 - Automated the workflow using GitHub Actions, achieving zero failures across 200+ runs at \~47 seconds each.
-- Simulated \~100 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
-- Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
+- Delivered a Power BI dashboard that auto-refreshes daily with no manual effort, eliminating ad-hoc reporting.
+- Surfaced sales insights across regions, segments, and sub-categories to support data-driven decisions.
 
 <hr>
 
 ## Key Insights
 
 - Standard Class drives \~60% of sales ($5.1M) and profit ($897K), making it the top profit-driving shipping mode.
-- Consumer Segment generates \~50% of revenue (\~$4.26M) and profit (\~$757K), our primary customer base.
+- Consumer Segment generates \~50% of revenue (\~$4.26M) and profit (\~$757K), the primary customer base.
 - Q4 (Oct-Dec) contributes \~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
 - Paper, Binders, and Phones are the top-performing sub-categories, together making up \~36% of total revenue.
 - West and East regions lead with \~58% of total sales, while the South with \~19% shows strong growth potential.
@@ -894,6 +890,7 @@ After placing connection details in an `.env` file, you can read it via Python u
 
 ```python
 # Importing Libraries
+import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -947,7 +944,7 @@ DB_NAME=dbname
     - That means all the data is loaded and stored within the .pbix file (or in Power BI Service once published).
     - All reports, visuals and calculations run on this cached data, not on the live data source.
   - **DirectQuery Mode**
-    - In DirectQuery Mode, Power BI does not import or stores data.
+    - In DirectQuery Mode, Power BI does not import or store data.
     - Instead, it sends real-time queries to the data source every time a user interacts with a report.
     - For live data refresh, choose DirectQuery Mode.
     
@@ -981,7 +978,7 @@ DB_NAME=dbname
 <img title="New Repository Secret" src="https://github.com/user-attachments/assets/3bbf4e6b-a834-40c9-af7e-316f72921ebf">
 &nbsp;
 
-- Open your local `.env` file (this file contains environment variables like API keys, tokens, etc).
+- Open your local `.env` file (this file contains environment variables like API keys, tokens, etc.).
 - For each variable, copy :
   - Name : the key (`DB_HOST`)
   - Value : the corresponding value (`ep-cool-darkness-a1b2c3d4-pooler.us-east-2.aws.neon.tech`)
@@ -1277,115 +1274,20 @@ jobs:
 ### 1. Home Page
 - This page serves as an entry point and navigation hub for the dashboard.
 
-<details>
-<summary>Click Here to view more Details</summary>
-
-### Key Components
-- **Navigation Buttons**
-  - Interactive page navigator that links to the Overview, Customers, and Products pages.
-- **Dashboard Branding**
-  - Displays a themed background image for a modern look.
-- **User Experience**
-  - Designed for clarity and smooth navigation so users can access key insights in one click.
-
-</details>
-
 <img title="Home" src="https://github.com/user-attachments/assets/a15b8d82-a886-492f-af40-3d8d25ea22ad">
 
 ### 2. Overview
 - This page focuses on a high-level summary of overall business performance like orders, customers, and products.
-
-<details>
-<summary>Click Here to view more Details</summary>
-
-### Key Components
-- **Multi-Row Cards : Key Business Metrics**
-  - Data View : `overall_sales_performance`
-  - Purpose : Gives an instant snapshot of business performance at a glance.
-- **Filled Map : Sales by State**
-  - Data View : `state_wise_sales_and_customer_base`
-  - Purpose : Visualizes geographic sales distribution, showing which states drive the most revenue.
-- **Donut Chart : Shipping Performance**
-  - Data View : `shipping_performance`
-  - Purpose : Compares sales and profit by shipping mode, helping identify cost-effective delivery methods.
-- **Stacked Bar Chart : Segment-wise Sales & Profit**
-  - Data View : `segment_wise_sales_and_profit`
-  - Purpose : Shows sales and profit across customer segments.
-- **Bar Chart : Top Customers by Sales**
-  - Data View : `top_customers_by_sales`
-  - Purpose : Highlights top-performing customers, helping identify key contributors to revenue.
-- **Filled Area Chart : Monthly Sales & Profit Trend**
-  - Data View : `month_wise_sales_and_profit`
-  - Purpose : Displays month-wise trends of sales and profit to track seasonal performance and growth.
-
-</details>
 
 <img title="Overview" src="https://github.com/user-attachments/assets/5584efcc-c10a-40c0-b18c-18e907ea64df">
 
 ### 3. Customers
 - This page focuses on understanding customer behavior, performance, and geographic distribution.
 
-<details>
-<summary>Click Here to view more Details</summary>
-
-### Key Components
-- **Multi-Row Card : Customer Performance Summary**
-  - Data View : `overall_customers_performance`
-  - Purpose : Provides an overview of how much each customer contributes on average to sales and profit.
-- **Filled Map : State-wise Customer Base**
-  - Data View : `state_wise_sales_and_customer_base`
-  - Purpose : Visualizes customer distribution across states, helping identify regions with largest customer base.
-- **Stacked Column Chart : Region-wise Monthly Sales**
-  - Data View : `region_wise_monthly_sales`
-  - Purpose : Tracks how sales vary across regions and months, helping spot seasonal and regional trends.
-- **Stacked Column Chart : Region-wise Sales & Profit**
-  - Data View : `region_wise_sales_and_profit`
-  - Purpose : Compares overall sales and profit across regions to identify high- and low-performing areas.
-- **Dual Area Charts : Segment-wise Monthly Sales & Profit**
-  - Data View : `segment_wise_monthly_sales_and_profit`
-  - Purpose : Visualizes monthly trends of sales and profit across customer segments.
-
-</details>
-
 <img title="Customers" src="https://github.com/user-attachments/assets/fd6944a8-59af-43e3-a78d-18b1f92386a4">
 
 ### 4. Products
 - This page focuses on analyzing product performance, category trends, and geographic purchasing behavior.
-
-<details>
-<summary>Click Here to view more Details</summary>
-
-### Key Components
-- **Filled Map : State-wise Most Purchased Sub-category**
-  - Data View : `state_wise_most_purchased_sub_category`
-  - Purpose : Identifies regional preferences and popular product types across states.
-- **Treemap : Category-wise Orders**
-  - Data View : `category_wise_sales_profit_and_orders`
-  - Purpose : Visualizes which categories dominate in orders and their contribution to the business.
-- **Stacked Column Chart : Category-wise Sales and Profit**
-  - Data View : `category_wise_sales_profit_and_orders`
-  - Purpose : Shows which categories dominate in sales and profit and their contribution to the business.
-- **Stacked Bar Chart : Sub-category-wise Sales & Profit**
-  - Data View : `sub_category_wise_sales_and_profit`
-  - Purpose : Compares business performance across all product sub-categories.
-- **Dual Ribbon Charts : Category-wise Monthly Sales & Profit Trends**
-  - Data View : `category_wise_monthly_sales_and_profit`
-  - Purpose : Tracks how each product category performs across months to identify growth patterns.
-- **Gauge Chart : Profit Margin Tracker**
-  - Data Source :
-    - Calculated using total sales and profit.
-  - Configuration :
-    - Minimum : 0%
-    - Maximum : 40%
-    - Target : 30%
-  - Purpose :
-    - Tracks the current profit margin against the target (30%).
-  - Color Logic :
-    - Red (0–10%) ➜ Low profit margin, needs improvement.
-    - Yellow (10–20%) ➜ Moderate margin, progressing toward target.
-    - Green (20–40%) ➜ Healthy profit margin, close to or exceeding target.
-
-</details>
 
 <img title="Products" src="https://github.com/user-attachments/assets/ccf6f4ad-4498-4d0b-9284-0c60feeb19c2">
 
