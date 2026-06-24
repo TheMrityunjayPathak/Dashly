@@ -585,9 +585,9 @@ This section summarizes pipeline performance metrics such as runtime, automation
 ### 1. Data Loading Overview
 | **Parameter**          | **Value**                         |
 | :--------------------- | :-------------------------------- |
-| **Dataset Size**       | \~50,000 sales records             |
+| **Dataset Size**       | \~50,000 sales records            |
 | **Tables Used**        | `customers`, `orders`, `products` |
-| **Avg. Daily Inserts** | \~100 new records                  |
+| **Avg. Daily Inserts** | \~100 new records                 |
 | **Database**           | Neon PostgreSQL (cloud-hosted)    |
 
 > [!NOTE]
@@ -650,12 +650,12 @@ This section summarizes pipeline performance metrics such as runtime, automation
 <hr>
 
 ### 5. Reliability and Stability
-| **Metric**                | **Value**                | **Remarks**                                |
-| :------------------------ | :----------------------- | :----------------------------------------- |
+| **Metric**                | **Value**                 | **Remarks**                                |
+| :------------------------ | :------------------------ | :----------------------------------------- |
 | **Total Runtime**         | \~47 seconds              | Fast for a daily automated ETL pipeline    |
 | **Success Rate**          | 100%                      | Verified via GitHub Actions workflow panel |
 | **Avg. Records Inserted** | \~100 rows/day            | Lightweight daily incremental updates      |
-| **Resource Utilization**  | Low CPU and memory usage | Efficient for cloud runners                |
+| **Resource Utilization**  | Low CPU and memory usage  | Efficient for cloud runners                |
 
 > [!IMPORTANT]
 > The pipeline runs fully unattended, ensuring consistent daily data updates and automatic Power BI refreshes.
@@ -667,7 +667,7 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 1. Shipping Mode Performance
 | **Shipping Mode** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
-| ----------------- | ------------------: | -------------------: | -------------------: | --------------------: | ----------------: |
+| :---------------- | :------------------ | :------------------- | :------------------- | :-------------------- | :---------------- |
 | Standard Class    |           5,099,197 |            **59.7%** |              897,360 |             **59.8%** |         **17.6%** |
 | Second Class      |           1,650,059 |            **19.3%** |              292,629 |             **19.5%** |         **17.7%** |
 | First Class       |           1,343,959 |            **15.7%** |              230,784 |             **15.4%** |         **17.2%** |
@@ -689,7 +689,7 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 2. Customer Segment Performance
 | **Segment** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
-| ----------- | ------------------- | -------------------- | -------------------- | --------------------- | ----------------- |
+| :---------- | :------------------ | :------------------- | :------------------- | :-------------------- | :---------------- |
 | Consumer    |           4,263,570 |            **49.9%** |              757,416 |             **50.5%** |         **17.8%** |
 | Corporate   |           2,742,160 |            **32.1%** |              475,855 |             **31.7%** |         **17.4%** |
 | Home Office |           1,528,321 |            **17.9%** |              266,483 |             **17.8%** |         **17.4%** |
@@ -709,7 +709,7 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 3. Monthly Sales & Profit Performance
 | **Month** | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** | **Profit Margin** |
-| --------- | ------------------- | -------------------- | -------------------- | --------------------- | ----------------- |
+| :-------- | :------------------ | :------------------- | :------------------- | :-------------------- | :---------------- |
 | Jan       |             731,193 |             **8.6%** |              130,941 |              **8.7%** |         **17.9%** |
 | Feb       |             666,688 |             **7.8%** |              119,076 |              **7.9%** |         **17.9%** |
 | Mar       |             765,028 |             **9.0%** |              131,184 |              **8.7%** |         **17.1%** |
@@ -738,11 +738,11 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 4. Regional Performance Insights
 | **Region**  | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** |
-| ----------- | ------------------- | -------------------- | -------------------- | --------------------- |
-| **West**    |           2,484,870 |                 \~29% |              440,814 |                  \~29% |
-| **East**    |           2,456,014 |                 \~29% |              427,689 |                  \~28% |
-| **Central** |           1,986,280 |                 \~23% |              352,400 |                  \~23% |
-| **South**   |           1,606,887 |                 \~19% |              278,851 |                  \~19% |
+| :---------- | :------------------ | :------------------- | :------------------- | :-------------------- |
+| **West**    |           2,484,870 |                \~29% |              440,814 |                 \~29% |
+| **East**    |           2,456,014 |                \~29% |              427,689 |                 \~28% |
+| **Central** |           1,986,280 |                \~23% |              352,400 |                 \~23% |
+| **South**   |           1,606,887 |                \~19% |              278,851 |                 \~19% |
 
 <details>
 <summary>Click Here to view Key Insights</summary>
@@ -759,15 +759,15 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 5. Sub-Category Performance
 | **Sub-Category**          | **Total Sales ($)** | **% of Total Sales** | **Total Profit ($)** | **% of Total Profit** |
-| ------------------------- | ------------------- | -------------------- | -------------------- | --------------------- |
-| Paper                     |           1,260,080 |                 \~15% |              223,147 |                  \~15% |
-| Binders                   |             943,376 |                 \~11% |              162,084 |                  \~11% |
-| Phones                    |             879,975 |                 \~10% |              153,018 |                  \~10% |
-| Furnishings               |             836,955 |                 \~10% |              151,623 |                  \~10% |
-| Art                       |             697,965 |                  \~8% |              120,843 |                   \~8% |
-| Storage                   |             651,268 |                  \~8% |              112,673 |                   \~8% |
-| Accessories               |             643,638 |                  \~7% |              112,007 |                   \~7% |
-| Appliances                |             495,030 |                  \~6% |               90,786 |                   \~6% |
+| :------------------------ | :------------------ | :------------------- | :------------------- | :-------------------- |
+| Paper                     |           1,260,080 |                \~15% |              223,147 |                 \~15% |
+| Binders                   |             943,376 |                \~11% |              162,084 |                 \~11% |
+| Phones                    |             879,975 |                \~10% |              153,018 |                 \~10% |
+| Furnishings               |             836,955 |                \~10% |              151,623 |                 \~10% |
+| Art                       |             697,965 |                 \~8% |              120,843 |                  \~8% |
+| Storage                   |             651,268 |                 \~8% |              112,673 |                  \~8% |
+| Accessories               |             643,638 |                 \~7% |              112,007 |                  \~7% |
+| Appliances                |             495,030 |                 \~6% |               90,786 |                  \~6% |
 | Others (8 sub-categories) |                   — |                    — |                    — |                     — |
 
 <details>
@@ -785,7 +785,7 @@ This section highlights key business insights and trends derived from the Power 
 
 ### 6. State-wise Sales Performance
 | **State**    | **Total Sales ($)** | **Total Customers** | **% of Total Sales** |
-| :----------- | ------------------- | ------------------- | -------------------- |
+| :----------- | :------------------ | :------------------ | :------------------- |
 | California   |           1,792,545 |                 188 |            **21.4%** |
 | New York     |             924,728 |                 104 |            **11.0%** |
 | Texas        |             903,046 |                  92 |            **10.8%** |
