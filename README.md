@@ -37,25 +37,15 @@
 <hr>
 
 ## Problem Statement
-Quick Buy is a superstore operating across the United States.
-
-Currently, the store relies heavily on spreadsheets and ad-hoc SQL queries to track business performance.
-- This manual process makes it :
-  - Harder to keep the data structured and consistent.
-  - Time-consuming to prepare reports.
-  - Difficult to update and maintain daily transaction records.
-  - Challenging for non-technical users to understand key business insights.
-    
-- To solve these challenges, Quick Buy built an automated system that :
-  - Collects and stores all data in a structured database.
-  - Cleans, updates, and analyzes data automatically using an ETL pipeline and SQL views.
-  - Displays insights through an interactive Power BI dashboard.
-  - Helps managers and executives understand business performance and make informed decisions.
+- Quick Buy is a superstore operating across the United States.
+- Performance tracking relied heavily on manual spreadsheets and ad-hoc SQL queries.
+- As a result, decision-making slowed down, making it harder to identify growth opportunities.
+- The goal was to automate the data workflow and deliver an up-to-date sales dashboard for informed decisions.
 
 <hr>
 
 ## Overview
-- Designed an ETL pipeline with Python and SQLAlchemy to load 50,000+ sales records into a PostgreSQL database.
+- Designed an ETL pipeline with Python and SQLAlchemy to load 50K+ sales records into a PostgreSQL database.
 - Simulated \~100 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
 - Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
 
