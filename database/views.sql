@@ -100,7 +100,7 @@ CREATE OR REPLACE VIEW overall_customers_performance AS
 SELECT 
     ROUND(SUM(o.sales)/COUNT(DISTINCT o.customer_id)) AS avg_sales_per_customer,
     ROUND(SUM(o.profit)/COUNT(DISTINCT o.customer_id)) AS avg_profit_per_customer,
-    ROUND(COUNT(DISTINCT order_id)/COUNT(DISTINCT customer_id)) AS avg_orders_per_customer,
+    ROUND(COUNT(DISTINCT order_id)::NUMERIC/COUNT(DISTINCT customer_id), 2) AS avg_orders_per_customer,
     ROUND(SUM(o.quantity)/COUNT(DISTINCT o.customer_id)) AS avg_quantity_per_customer
 FROM orders AS o;
 
