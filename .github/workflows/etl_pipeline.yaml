@@ -4,18 +4,24 @@ name: ETL Pipeline Automation
 # ---------------- When should it run? ----------------
 on:
   schedule:
-    - cron: "30 4 * * *"   # Run the workflow daily at 10:00 AM
-  workflow_dispatch:       # Allow manual run from GitHub UI
+    - cron: "30 4 * * *" # Run the workflow daily at 10:00 AM
+  workflow_dispatch: # Allow manual run from GitHub UI
 
 # ---------------- Authority to update Repository ----------------
 permissions:
   contents: write
 
+# ---------------- Run Only One Pipeline at a Time ----------------
+# Queues overlapping runs (cron + manual) instead of letting them race on the DB
+concurrency:
+  group: etl-pipeline
+  cancel-in-progress: false # Don't kill an in-progress run, let it finish, queue the next one instead
+
 # ---------------- Set of steps to run ----------------
 jobs:
   data-pipeline:
-    runs-on: ubuntu-latest   # Use a Linux VM for the Job
-    timeout-minutes: 30      # Prevents stuck workflows from running forever
+    runs-on: ubuntu-latest # Use a Linux VM for the Job
+    timeout-minutes: 30 # Prevents stuck workflows from running forever
 
     env: # Shared env variables available to all scripts
       DB_USER: ${{ secrets.DB_USER }}
@@ -39,6 +45,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip" # Speeds up installs by caching pip packages between runs
 
       # ---------------- Step 3 : Install Dependencies ----------------
       # Installs all Python libraries listed in requirements.txt
