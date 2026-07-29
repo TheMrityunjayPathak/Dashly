@@ -30,8 +30,6 @@ CREATE TABLE IF NOT EXISTS orders (
   quantity INTEGER,
   discount NUMERIC,
   profit NUMERIC,
-  shipping_duration INTEGER,
-  profit_margin NUMERIC,
   FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
   FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
