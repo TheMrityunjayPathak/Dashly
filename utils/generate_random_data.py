@@ -5,28 +5,38 @@ import numpy as np
 import pandas as pd
 from faker import Faker
 from functools import reduce
+from pathlib import Path
 from datetime import timedelta
-from kaggle.api.kaggle_api_extended import KaggleApi
 
 # Setting up Faker to generate Fake Data
 faker = Faker("en_US")
 
-# Downloading the latest version of the Dataset from Kaggle
-api = KaggleApi()
-api.authenticate()
+dataset_path = Path(__file__).resolve().parent.parent / "data"
 
-dataset_path = "data"
+dataset_path.mkdir(exist_ok=True)
 
-os.makedirs(dataset_path, exist_ok=True)
-
-api.dataset_download_files(
-    "vivek468/superstore-dataset-final", path=dataset_path, unzip=True
-)
-
-# Finding CSV File
+# Finding CSV File already cached on disk
+csv_file_path = None
 for file in os.listdir(dataset_path):
     if file.endswith(".csv"):
         csv_file_path = os.path.join(dataset_path, file)
+        break
+
+# Downloading the Dataset from Kaggle only if not already cached
+if csv_file_path is None:
+    from kaggle.api.kaggle_api_extended import KaggleApi
+
+    api = KaggleApi()
+    api.authenticate()
+
+    api.dataset_download_files(
+        "vivek468/superstore-dataset-final", path=dataset_path, unzip=True
+    )
+
+    for file in os.listdir(dataset_path):
+        if file.endswith(".csv"):
+            csv_file_path = os.path.join(dataset_path, file)
+            break
 
 # Reading the CSV File
 df = pd.read_csv(csv_file_path, encoding_errors="ignore")
