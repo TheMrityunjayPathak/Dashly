@@ -1,9 +1,11 @@
 import pandas as pd
+from sqlalchemy import text
+
 
 def append_unique_data_to_db(table_name, new_data, primary_key_column, engine):
     """
     Function to append new and unique data to the given table in the database.
-    
+
     Parameters:
         table_name (str): Name of the target table in the database
         new_data (pd.DataFrame): DataFrame containing the new data to be appended
@@ -13,7 +15,9 @@ def append_unique_data_to_db(table_name, new_data, primary_key_column, engine):
     Returns:
         None
     """
-    existing_data = pd.read_sql(f"SELECT {primary_key_column} FROM {table_name}", engine)
+    existing_data = pd.read_sql(
+        text(f"SELECT {primary_key_column} FROM {table_name}"), engine
+    )
     existing_ids = set(existing_data[primary_key_column])
 
     new_data_unique = new_data[~new_data[primary_key_column].isin(existing_ids)]
