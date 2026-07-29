@@ -7,13 +7,13 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Pandas](https://img.shields.io/badge/Pandas-4420C7?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-679CC7?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)](https://git-scm.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-689DC8?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Git](https://img.shields.io/badge/Git-F05133?style=flat&logo=git&logoColor=white)](https://git-scm.com/)
 
 </div>
 
 <a href="https://app.powerbi.com/view?r=eyJrIjoiZTgxODBhYmMtYjc1Zi00YjVkLWIyZDItZDYxY2RjZmIwNGY5IiwidCI6ImZhYjAyYzVkLTYxYjYtNGIxMi05ZTY2LTdhMDhkOWY0ZmNjMSJ9&pageName=5b9aaf645951a59cacdc">
-  <img title="Dashly" src="https://github.com/user-attachments/assets/bb5eaa04-6e1f-4e57-b038-160018dd896e">
+  <img title="Dashly" src="https://github.com/user-attachments/assets/519b5a9e-7e56-4ab4-a9fb-8dfd5b18063c">
 </a>
 
 ## Table of Contents
@@ -37,23 +37,29 @@
 <hr>
 
 ## Problem Statement
-- Quick Buy is a superstore operating across the United States.
+- Quick Buy is a superstore chain operating across the United States.
 - Performance tracking relied heavily on manual spreadsheets and ad-hoc SQL queries.
-- As a result, decision-making slowed down, making it harder to identify growth opportunities.
+- This slowed down decision-making and made it harder to spot growth opportunities.
 - The goal was to automate the data workflow and deliver an up-to-date sales dashboard for informed decisions.
 
 <hr>
 
 ## Overview
-- Designed an ETL pipeline with Python and SQLAlchemy to load 50K+ sales records into a PostgreSQL database.
-- Simulated \~100 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
-- Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates.
+- Designed an ETL pipeline with Python and SQLAlchemy to load 20K+ sales records into a PostgreSQL database.
+- Simulated ~70 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
+- Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates required.
 
 <hr>
 
 ## Workflow
 
-<img title="Workflow Diagram" src="https://github.com/user-attachments/assets/4a689ba3-3350-4476-8939-6dde194892fa">
+<details>
+<summary>Click Here to view Workflow Diagram</summary>
+&nbsp;
+
+<img title="Workflow Diagram" src="https://github.com/user-attachments/assets/a623868e-ad97-4e6d-8e74-2aefdf62a2bb">
+
+</details>
 
 <hr>
 
@@ -68,7 +74,7 @@ The ER (Entity-Relationship) diagram visually represents how different tables in
 - **Orders Table ➜ Central Table**
   - Serves as the main transactional table, linking customers and products.
 
-<img width="500px" title="ER Diagram" src="https://github.com/user-attachments/assets/e8767755-356f-4f92-9820-cf4438c8cbc5">
+<img width="500px" title="ER Diagram" src="https://github.com/user-attachments/assets/acebc61b-0730-4434-ba6a-409bf71c7762">
 
 <hr>
 
@@ -118,8 +124,6 @@ CREATE TABLE IF NOT EXISTS orders (
   quantity INTEGER,
   discount NUMERIC,
   profit NUMERIC,
-  shipping_duration INTEGER,
-  profit_margin NUMERIC,
   FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
   FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
@@ -268,7 +272,7 @@ CREATE OR REPLACE VIEW overall_customers_performance AS
 SELECT 
     ROUND(SUM(o.sales)/COUNT(DISTINCT o.customer_id)) AS avg_sales_per_customer,
     ROUND(SUM(o.profit)/COUNT(DISTINCT o.customer_id)) AS avg_profit_per_customer,
-    ROUND(COUNT(DISTINCT order_id)/COUNT(DISTINCT customer_id)) AS avg_orders_per_customer,
+    ROUND(COUNT(DISTINCT order_id)::NUMERIC/COUNT(DISTINCT customer_id), 2) AS avg_orders_per_customer,
     ROUND(SUM(o.quantity)/COUNT(DISTINCT o.customer_id)) AS avg_quantity_per_customer
 FROM orders AS o;
 ```
@@ -461,20 +465,20 @@ python scripts/etl.py
 > [!NOTE]
 > Run this only once initially or when you want a full database refresh.
 
-### 8. Create SQL Views
-This script builds reusable SQL views that summarize business metrics for the Power BI dashboard.
-
-It simplifies queries, ensures consistent logic, and improves performance.
-```bash
-python scripts/create_views.py
-```
-
-### 9. Generate New Data
+### 8. Generate New Data
 Simulates daily transactions by generating new random data for testing pipeline automation.
 
 Helps verify how dashboards respond to new data over time.
 ```bash
 python scripts/generate_data.py
+```
+
+### 9. Create SQL Views
+This script builds reusable SQL views that summarize business metrics for the Power BI dashboard.
+
+It simplifies queries, ensures consistent logic, and improves performance.
+```bash
+python scripts/create_views.py
 ```
 
 ### 10. Export Views as CSVs
@@ -488,8 +492,9 @@ python scripts/export_views.py
 ### 11. Check Logs
 - Check log files inside the `logs/` folder :
   - `etl.log` : Initial data loading
-  - `create_views.log` : SQL views creation
   - `generate_data.log` : Daily data generation
+  - `create_views.log` : SQL views creation
+  - `export_views.log` : CSV export from views
 - Logs help you monitor pipeline performance and troubleshoot errors quickly.
 
 <hr>
@@ -503,12 +508,15 @@ python scripts/export_views.py
 | **Script Name**    | **Purpose**                                                                                  |
 | :----------------- | :------------------------------------------------------------------------------------------- |
 | `etl.py`           | Sets up the database schema, cleans the dataset, and loads initial data into the database.   |
-| `create_views.py`  | Creates multiple SQL views that summarize and aggregate data for the Power BI dashboard.     |
 | `generate_data.py` | Generates random synthetic transaction data to simulate daily updates in the database.       |
+| `create_views.py`  | Creates multiple SQL views that summarize and aggregate data for the Power BI dashboard.     |
 
 ### How does the ETL pipeline work?
 #### 1. `etl.py`
 - This script handles the first step of the process by preparing the database.
+
+<details>
+<summary>Click Here to View Details</summary>
 
 #### What does it do?
 - **Load Configuration**
@@ -524,25 +532,15 @@ python scripts/export_views.py
 - **Schema Management**
   - Ensures relationships between tables using foreign keys and maintains data integrity.
 
----
-
-#### 2. `create_views.py`
-- This script builds SQL views in the PostgreSQL database to simplify analysis and reporting in Power BI.
-
-#### What does it do?
-- **Database Connection**
-  - Connects to the database securely using environment variables.
-- **Define SQL Views**
-  - Creates multiple SQL views to summarize and aggregate key business insights.
-- **Execute & Commit**
-  - Executes each `CREATE OR REPLACE VIEW` statement and commits changes.
-- **Logging Setup**
-  - Stores execution logs in `logs/create_views.log`.
+</details>
 
 ---
 
-#### 3. `generate_data.py`
+#### 2. `generate_data.py`
 - This script keeps the database updated with new transaction data for scheduled data refresh in Power BI.
+
+<details>
+<summary>Click Here to View Details</summary>
 
 #### What does it do?
 - **Generate Random Data**
@@ -554,15 +552,49 @@ python scripts/export_views.py
 - **Logging Setup**
   - Saves process logs in `logs/generate_data.log`.
 
-Once this cycle is complete, the process repeats automatically :
+</details>
+
+---
+
+#### 3. `create_views.py`
+- This script builds SQL views in the PostgreSQL database to simplify analysis and reporting in Power BI.
+
+<details>
+<summary>Click Here to View Details</summary>
+
+#### What does it do?
+- **Database Connection**
+  - Connects to the database securely using environment variables.
+- **Define SQL Views**
+  - Creates multiple SQL views to summarize and aggregate key business insights.
+- **Execute & Commit**
+  - Executes each `CREATE OR REPLACE VIEW` statement and commits changes.
+- **Logging Setup**
+  - Stores execution logs in `logs/create_views.log`.
+
+</details>
+
+---
+
+Once this cycle is complete, the process repeats automatically.
 
 ```
-generate_data.py ➜ create_views.py ➜ Power BI Refresh ➜ New Insights
+   +----------------------+     +----------------------+     +----------------------+
+   |     Raw CSV Data     |     |      ETL Script      |     |      PostgreSQL      |
+   |   (sales_data.csv)   | --> |       (etl.py)       | --> |       Database       |
+   +----------------------+     +----------------------+     +----------------------+
+                                                                          |
+                                                                          v
+   +----------------------+     +----------------------+     +----------------------+
+   | Generate Data Script |     |       Power BI       |     |     Views Script     |
+   |  (generate_data.py)  | <-- |      Dashboard       | <-- |  (create_views.py)   |
+   +----------------------+     +----------------------+     +----------------------+
+               |
+               |
+               +--> Back into PostgreSQL Database (next day's 10:00 AM IST cron run)
 ```
 
 This ensures that the Power BI Dashboard always displays the latest insights automatically.
-
-<img title="ETL Pipeline" src="https://github.com/user-attachments/assets/a4a54ad4-eace-4f3c-b90d-53bb0983de00">
 
 <hr>
 
@@ -575,9 +607,9 @@ This section summarizes pipeline performance metrics such as runtime, automation
 ### 1. Data Loading Overview
 | **Parameter**          | **Value**                         |
 | :--------------------- | :-------------------------------- |
-| **Dataset Size**       | \~50,000 sales records            |
+| **Dataset Size**       | 20K+ sales records                |
 | **Tables Used**        | `customers`, `orders`, `products` |
-| **Avg. Daily Inserts** | \~100 new records                 |
+| **Avg. Daily Inserts** | \~70 new orders                   |
 | **Database**           | Neon PostgreSQL (cloud-hosted)    |
 
 > [!NOTE]
@@ -630,7 +662,7 @@ This section summarizes pipeline performance metrics such as runtime, automation
 | **Aspect**         | **Implementation Details**                                                     |
 | :----------------- | :----------------------------------------------------------------------------- |
 | **Error Tracking** | Structured `try–except` error handling in each script                          |
-| **Log Files**      | `etl.log`, `generate_data.log`, `create_views.log`                             |
+| **Log Files**      | `etl.log`, `generate_data.log`, `create_views.log`, `export_views.log`         |
 | **Log Storage**    | Uploaded as GitHub Actions run artifacts                                       |
 | **Security**       | All credentials securely stored in GitHub Secrets (`DB_USER`, `DB_PASS`, etc.) |
 
@@ -644,7 +676,7 @@ This section summarizes pipeline performance metrics such as runtime, automation
 | :------------------------ | :------------------------ | :----------------------------------------- |
 | **Total Runtime**         | \~47 seconds              | Fast for a daily automated ETL pipeline    |
 | **Success Rate**          | 100%                      | Verified via GitHub Actions workflow panel |
-| **Avg. Records Inserted** | \~100 rows/day            | Lightweight daily incremental updates      |
+| **Avg. Records Inserted** | \~70 orders/day           | Lightweight daily incremental updates      |
 | **Resource Utilization**  | Low CPU and memory usage  | Efficient for cloud runners                |
 
 > [!IMPORTANT]
@@ -776,11 +808,11 @@ This section highlights key business insights and trends derived from the Power 
 ### 6. State-wise Sales Performance
 | **State**    | **Total Sales ($)** | **Total Customers** | **% of Total Sales** |
 | :----------- | :------------------ | :------------------ | :------------------- |
-| California   |           1,792,545 |                 188 |            **21.4%** |
-| New York     |             924,728 |                 104 |            **11.0%** |
-| Texas        |             903,046 |                  92 |            **10.8%** |
-| Pennsylvania |             472,741 |                  45 |             **5.6%** |
-| Ohio         |             451,732 |                  51 |             **5.4%** |
+| California   |           1,792,545 |                 188 |            **21.0%** |
+| New York     |             924,728 |                 104 |            **10.8%** |
+| Texas        |             903,046 |                  92 |            **10.6%** |
+| Pennsylvania |             472,741 |                  45 |             **5.5%** |
+| Ohio         |             451,732 |                  51 |             **5.3%** |
 
 <details>
 <summary>Click Here to view Key Insights</summary>
@@ -795,21 +827,19 @@ This section highlights key business insights and trends derived from the Power 
 <hr>
 
 ## Impact
-
-- Automated the workflow using GitHub Actions, achieving zero failures across 200+ runs at \~47 seconds each.
+- Automated the workflow using GitHub Actions, achieving zero failures across 250+ runs at ~47 seconds each.
 - Delivered a Power BI dashboard that auto-refreshes daily with no manual effort, eliminating ad-hoc reporting.
 - Surfaced sales insights across regions, segments, and sub-categories to support data-driven decisions.
 
 <hr>
 
 ## Key Insights
-
-- Standard Class drives \~60% of sales ($5.1M) and profit ($897K), making it the top profit-driving shipping mode.
-- Consumer Segment generates \~50% of revenue (\~$4.26M) and profit (\~$757K), the primary customer base.
-- Q4 (Oct-Dec) contributes \~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
-- Paper, Binders, and Phones are the top-performing sub-categories, together making up \~36% of total revenue.
-- West and East regions lead with \~58% of total sales, while the South with \~19% shows strong growth potential.
-- Top 5 States (CA, NY, TX, PA, OH) generate \~54% of total sales, with CA alone contributing \~21% of sales.
+- Standard Class drives ~60% of sales ($5.1M) and profit ($897K), making it the top profit-driving shipping mode.
+- Consumer Segment generates ~50% of revenue (~$4.26M) and profit (~$757K), the primary customer base.
+- Q4 (Oct-Dec) contributes ~27% of annual revenue, indicating strong seasonal demand, ideal for promotions.
+- Paper, Binders, and Phones are the top-performing sub-categories, together making up ~36% of total revenue.
+- West and East regions lead with ~58% of total sales, while the South with ~19% shows strong growth potential.
+- Top 5 States (CA, NY, TX, PA, OH) generate ~54% of total sales, with CA alone contributing ~21% of sales.
 
 <hr>
 
@@ -942,7 +972,7 @@ DB_NAME=dbname
 
 - Once connected, you'll see a list of all available tables and views from your Neon database.
 - Select the ones you want to use in your report and Click Load.
-<img title="Loading Required Data" src="https://github.com/user-attachments/assets/5fd32b9e-826c-4351-95f0-34ff712460fa">
+<img title="Loading Required Data" src="https://github.com/user-attachments/assets/6f582a78-4eff-45b1-9170-acdccbb08cac">
 &nbsp;
 
 - Power BI is now connected to your Neon PostgreSQL database.
@@ -1002,18 +1032,24 @@ name: ETL Pipeline Automation
 # ---------------- When should it run? ----------------
 on:
   schedule:
-    - cron: "30 4 * * *"   # Run the workflow daily at 10:00 AM
-  workflow_dispatch:       # Allow manual run from GitHub UI
+    - cron: "30 4 * * *" # Run the workflow daily at 10:00 AM
+  workflow_dispatch: # Allow manual run from GitHub UI
 
 # ---------------- Authority to update Repository ----------------
 permissions:
   contents: write
 
+# ---------------- Run Only One Pipeline at a Time ----------------
+# Queues overlapping runs (cron + manual) instead of letting them race on the DB
+concurrency:
+  group: etl-pipeline
+  cancel-in-progress: false # Don't kill an in-progress run, let it finish, queue the next one instead
+
 # ---------------- Set of steps to run ----------------
 jobs:
   data-pipeline:
-    runs-on: ubuntu-latest   # Use a Linux VM for the Job
-    timeout-minutes: 30      # Prevents stuck workflows from running forever
+    runs-on: ubuntu-latest # Use a Linux VM for the Job
+    timeout-minutes: 30 # Prevents stuck workflows from running forever
 
     env: # Shared env variables available to all scripts
       DB_USER: ${{ secrets.DB_USER }}
@@ -1037,13 +1073,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip" # Speeds up installs by caching pip packages between runs
 
       # ---------------- Step 3 : Install Dependencies ----------------
       # Installs all Python libraries listed in requirements.txt
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --no-cache-dir -r requirements.txt
 
       # ---------------- Step 4 : Run ETL Script ----------------
       # Runs your etl.py script to setup database
@@ -1132,7 +1169,20 @@ permissions:
 
 <hr>
 
-### 4. Jobs
+### 4. Concurrency
+```yaml
+concurrency:
+  group: etl-pipeline
+  cancel-in-progress: false
+```
+- Ensures only one run of this workflow executes at a time.
+- If automated `cron` and manual `workflow_dispatch` overlap, the second run queues instead of running in parallel.
+- `cancel-in-progress: false` means the in-progress run finishes fully before the queued run starts.
+- Prevents two runs from racing on the same database truncate/insert or pushing conflicting commits.
+
+<hr>
+
+### 5. Jobs
 ```yaml
 jobs:
   data-pipeline:
@@ -1153,7 +1203,7 @@ jobs:
 
 <hr>
 
-### 5. Main Workflow Tasks
+### 6. Main Workflow Tasks
 - Each step defines a task GitHub Actions performs in sequence :
 
 #### Step 1 : Checkout Repository
@@ -1169,15 +1219,17 @@ jobs:
   uses: actions/setup-python@v5
   with:
     python-version: "3.12"
+    cache: "pip"
 ```
 - Installs Python 3.12 on the VM, version used by the ETL scripts.
+- Caches pip dependencies between runs so `Install dependencies` doesn't cold-install every time.
 
 #### Step 3 : Install Dependencies
 ```yaml
 - name: Install dependencies
   run: |
     python -m pip install --upgrade pip
-    pip install -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 ```
 - Installs all the Python libraries listed in `requirements.txt` file.
 
