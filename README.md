@@ -17,8 +17,8 @@
 </a>
 
 ## Table of Contents
-- [Problem Statement](#problem-statement)
-- [Overview](#overview)
+- [Problem](#problem)
+- [Solution](#solution)
 - [Workflow](#workflow)
 - [ER Diagram](#er-diagram)
 - [Database Schema](#database-schema)
@@ -36,7 +36,7 @@
 
 <hr>
 
-## Problem Statement
+## Problem
 - Quick Buy is a superstore chain operating across the United States.
 - Performance tracking relied heavily on manual spreadsheets and ad-hoc SQL queries.
 - This slowed down decision-making and made it harder to spot growth opportunities.
@@ -44,7 +44,7 @@
 
 <hr>
 
-## Overview
+## Solution
 - Designed an ETL pipeline with Python and SQLAlchemy to load 20K+ sales records into a PostgreSQL database.
 - Simulated \~70 new transactions daily to replicate ongoing business activity and validate pipeline reliability.
 - Connected Power BI to PostgreSQL to deliver an auto-refreshing dashboard with no manual updates required.
