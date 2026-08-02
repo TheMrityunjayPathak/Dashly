@@ -1063,14 +1063,14 @@ jobs:
       # ---------------- Step 1 : Checkout Code ----------------
       # This pulls your repository into the GitHub Runner VM
       - name: Checkout repository
-        uses: actions/checkout@v4   
+        uses: actions/checkout@v5   
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # ---------------- Step 2 : Set up Python ----------------
       # Installs Python 3.12 so GitHub can run your Scripts
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip" # Speeds up installs by caching pip packages between runs
@@ -1109,7 +1109,7 @@ jobs:
       # ---------------- Step 8 : Save CSVs as Artifacts ----------------
       # Stores CSVs in the workflow run, downloadable from GitHub
       - name: Upload Exported CSV as Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: exported-views
           path: views/*.csv
@@ -1127,7 +1127,7 @@ jobs:
       # ---------------- Step 10 : Save Logs as Artifacts ----------------
       # Stores Logs in the workflow run, downloadable from GitHub
       - name: Upload Logs as Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: etl-logs
           path: logs/*.log
@@ -1209,14 +1209,14 @@ jobs:
 #### Step 1 : Checkout Repository
 ```yaml
 - name: Checkout repository
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
 ```
 - This pulls your GitHub Repository files into the VM so the workflow can access your scripts, data and folders.
 
 #### Step 2 : Set Up Python
 ```yaml
 - name: Set up Python
-  uses: actions/setup-python@v5
+  uses: actions/setup-python@v6
   with:
     python-version: "3.12"
     cache: "pip"
@@ -1273,7 +1273,7 @@ jobs:
 #### Step 8 : Upload CSVs as Artifacts
 ```yaml
 - name: Upload Exported CSV as Artifacts
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v5
   with:
     name: exported-views
     path: views/*.csv
@@ -1296,7 +1296,7 @@ jobs:
 #### Step 10 : Upload Logs
 ```yaml
 - name: Upload Logs as Artifacts
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v5
   with:
     name: etl-logs
     path: logs/*.log
